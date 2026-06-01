@@ -24,6 +24,14 @@
         </select>
     </div>
 
+    <div class="toggle-control-group">
+        <span class="control-label">Stretch Budget</span>
+        <label class="switch-container">
+            <input type="checkbox" id="budget-strictness-checkbox" onchange="toggleBudgetStrictness(this.checked)">
+            <span class="switch-slider"></span>
+        </label>
+    </div>
+
     <div class="theme-pill-switch" onclick="toggleTheme()">
         <i class="fa-solid fa-sun"></i>
         <i class="fa-solid fa-moon"></i>
@@ -32,24 +40,20 @@
 </div>
 
 <div class="quiz-container">
-    
     <div id="intro-screen" class="screen active">
         <h1>Find Your Bambu Lab Printer</h1>
         <div class="subtitle">Answer a few quick questions to identify your perfect 3D hardware match</div>
-        
         <div id="resume-container"></div>
-        
         <p style="line-height: 1.6; font-size: 15px; color: var(--text-color); opacity: 0.85; text-align: center; margin-bottom: 32px;">
-            Welcome to the advanced hardware assessment application. Input your maximum budget threshold range, framework insulation tools requirements, structural build plate scale envelopes, and mechanical toolhead nozzle counts to correctly process and evaluate matching architectural structural system hardware profiles.
+            Input your budget range, tool requirements, and toolhead nozzle counts to correctly evaluate structural system hardware profiles.
         </p>
-        
         <button class="btn" onclick="startQuiz(false)">
             <span>Begin Hardware Assessment</span>
             <i class="fa-solid fa-play"></i>
         </button>
 
         <div class="credit-paragraph">
-            This interactive decision tool dynamically processes hardware configurations to evaluate systemic matrix ecosystem variables in real-time. All code structures, core stylesheet layout configurations, internal matrix scoring engines, and interface workflows are the exclusive intellectual property of Harris Saunders. This system is protected under international digital copyright acts and trade secret provisions. Any unauthorized reproduction, packaging distribution, decompilation, or structural framing is strictly prohibited. © 2026 Harris Saunders. All rights reserved.
+            This interactive tool dynamically processes custom toolhead profiles to evaluate systemic ecosystem configurations in real-time. All code, structural interface mechanics, and scoring algorithms are the exclusive property of Harris Saunders. This system is protected under international copyright laws. Any unauthorized reproduction or distribution is strictly prohibited. © 2026 Harris Saunders. All rights reserved.
         </div>
     </div>
 
@@ -60,31 +64,22 @@
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <h3 id="question-text" style="margin:0; font-size:20px;">Loading Assessment Parameters...</h3>
-            <button id="explain-btn" class="info-trigger" onclick="toggleExplanation()">
-                <i class="fa-solid fa-circle-question"></i>
-            </button>
+            <button id="explain-btn" class="info-trigger" onclick="toggleExplanation()"><i class="fa-solid fa-circle-question"></i></button>
         </div>
 
         <div id="explain-modal" class="inline-explain-modal"></div>
-        
         <div id="options-container" class="options-list"></div>
-        
         <div id="slider-container" class="slider-wrapper" style="display:none;"></div>
         
         <div id="warning-box" class="soft-warning-box">
             <i class="fa-solid fa-triangle-exclamation" style="font-size: 16px;"></i>
-            <span id="warning-text">Parameter conflict notice flag triggered.</span>
+            <span id="warning-text">Parameter notice flag triggered.</span>
         </div>
 
         <div class="nav-buttons">
-            <button id="back-btn" class="btn btn-secondary" onclick="goBack()">
-                <i class="fa-solid fa-arrow-left"></i> Back
-            </button>
-            <button id="next-btn" class="btn" onclick="goNext()" disabled>
-                Continue <i class="fa-solid fa-arrow-right"></i>
-            </button>
+            <button id="back-btn" class="btn btn-secondary" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <button id="next-btn" class="btn" onclick="goNext()" disabled>Continue <i class="fa-solid fa-arrow-right"></i></button>
         </div>
-        
         <div id="status-box" class="status-box">Processing matrix coordinates...</div>
     </div>
 
@@ -100,15 +95,20 @@
         <h1>Your Personalized Matching Deck</h1>
         <div class="subtitle">Calculated ranking scores across retail configurations:</div>
         
+        <div id="comparison-action-bar" class="comparison-bar">
+            <span>Select multiple models below to compare them side-by-side.</span>
+            <button class="btn" style="width:auto; padding:8px 16px; font-size:13px;" id="compare-selected-btn" onclick="openMultiComparisonModal()" disabled>
+                Compare Selected (<span id="compare-count">0</span>)
+            </button>
+        </div>
+
         <div id="results-list-container" class="results-list"></div>
         
+        <div id="filament-calc-container"></div>
+
         <div style="margin-top: 32px; display: flex; gap: 14px;">
-            <button class="btn" style="font-size: 14.5px;" onclick="copyMarkdownReport()">
-                <i class="fa-solid fa-copy"></i> Export Recommendation Report
-            </button>
-            <button class="btn btn-secondary" style="font-size: 14.5px;" onclick="resetQuiz()">
-                <i class="fa-solid fa-rotate-right"></i> Restart Quiz
-            </button>
+            <button class="btn" style="font-size: 14.5px;" onclick="copyMarkdownReport()"><i class="fa-solid fa-copy"></i> Export Recommendation Report</button>
+            <button class="btn btn-secondary" style="font-size: 14.5px;" onclick="resetQuiz()"><i class="fa-solid fa-rotate-right"></i> Restart Quiz</button>
         </div>
     </div>
 </div>
@@ -121,5 +121,22 @@
     <div id="leaderboard" class="leaderboard-rows"></div>
 </div>
 
+<div id="compare-modal" class="comparison-overlay" onclick="closeCompareModal()">
+    <div class="comparison-window" onclick="event.stopPropagation()">
+        <h3 id="compare-title" style="font-size:19px; margin-bottom: 4px;">Specification Matrix</h3>
+        
+        <div class="volume-visualizer-section">
+            <div class="visualizer-label">Relative Structural Build Volumes:</div>
+            <div id="visualizer-box-container" class="visualizer-box-container"></div>
+        </div>
+
+        <div class="table-scroll-wrapper">
+            <table class="compare-table" id="compare-table-data"></table>
+        </div>
+        <button class="btn btn-secondary" style="margin-top:20px; width:auto; float:right; padding:8px 16px; font-size:13.5px;" onclick="closeCompareModal()">Dismiss View</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
