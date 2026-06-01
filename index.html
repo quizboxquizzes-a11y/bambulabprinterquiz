@@ -10,28 +10,8 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* Dark Theme Variables (Default Setup) */
+        /* Base Setup: Defaulting to clean Light Mode layout */
         :root {
-            --bg-color: #0d1117;
-            --container-bg: #161b22;
-            --text-color: #c9d1d9;
-            --heading-color: #ffffff;
-            --accent-color: #2ea44f;
-            --accent-hover: #238636;
-            --border-color: #30363d;
-            --card-hover: #21262d;
-            --selected-border: #58a6ff;
-            --widget-bg: rgba(22, 27, 34, 0.95);
-            --tag-pass: rgba(46, 164, 79, 0.15);
-            --tag-pass-text: #56d364;
-            --tag-fail: rgba(240, 81, 81, 0.1);
-            --tag-fail-text: #f7786b;
-            --shadow-color: rgba(0, 0, 0, 0.6);
-            --switch-bg: #30363d;
-        }
-
-        /* Light Theme Variables */
-        body.light-theme {
             --bg-color: #f6f8fa;
             --container-bg: #ffffff;
             --text-color: #24292f;
@@ -48,6 +28,26 @@
             --tag-fail-text: #cf222e;
             --shadow-color: rgba(140, 149, 159, 0.2);
             --switch-bg: #d0d7de;
+        }
+
+        /* Dark Theme Variables override */
+        body.dark-theme {
+            --bg-color: #0d1117;
+            --container-bg: #161b22;
+            --text-color: #c9d1d9;
+            --heading-color: #ffffff;
+            --accent-color: #2ea44f;
+            --accent-hover: #238636;
+            --border-color: #30363d;
+            --card-hover: #21262d;
+            --selected-border: #58a6ff;
+            --widget-bg: rgba(22, 27, 34, 0.95);
+            --tag-pass: rgba(46, 164, 79, 0.15);
+            --tag-pass-text: #56d364;
+            --tag-fail: rgba(240, 81, 81, 0.1);
+            --tag-fail-text: #f7786b;
+            --shadow-color: rgba(0, 0, 0, 0.6);
+            --switch-bg: #30363d;
         }
 
         body {
@@ -73,7 +73,7 @@
             margin-bottom: 20px;
         }
 
-        /* Swapped Pill Logic: Handle moves to Sun (left) on Dark, and Moon (right) on Light */
+        /* Re-engineered Pill Control Frame */
         .theme-pill-switch {
             position: relative;
             width: 58px;
@@ -92,13 +92,13 @@
         }
 
         .theme-pill-switch i { font-size: 12px; z-index: 2; line-height: 1; }
-        .theme-pill-switch .fa-moon { color: #8b949e; }
         .theme-pill-switch .fa-sun { color: #e3b341; }
+        .theme-pill-switch .fa-moon { color: #8b949e; }
 
         .theme-pill-handle {
             position: absolute;
             top: 3px;
-            left: 3px;
+            left: 3px; /* Default left resting anchor for Light Mode (Sun) */
             width: 22px;
             height: 22px;
             background-color: var(--container-bg);
@@ -108,9 +108,8 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* Clicking Sun removes 'light-theme' class -> Handle sits at Left (transX 0) */
-        /* Clicking Moon adds 'light-theme' class -> Handle slides to Right (transX 28px) */
-        body.light-theme .theme-pill-handle { transform: translateX(28px); }
+        /* Slides perfectly right to align over the moon icon when dark mode is chosen */
+        body.dark-theme .theme-pill-handle { transform: translateX(28px); }
 
         .quiz-container {
             background-color: var(--container-bg);
@@ -222,7 +221,7 @@
         .widget-header { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-color); opacity: 0.8; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
         .leaderboard-rows { display: flex; flex-direction: column; gap: 8px; }
         .leaderboard-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 8px 12px; border-radius: 8px; border: 1px solid transparent; background: rgba(0,0,0,0.05); transition: background 0.2s; }
-        body.light-theme .leaderboard-row { background: rgba(0,0,0,0.02); }
+        body.dark-theme .leaderboard-row { background: rgba(0,0,0,0.2); }
         .leaderboard-row.top-tier { background: rgba(46, 164, 79, 0.1); font-weight: 600; border-color: rgba(46, 164, 79, 0.2); }
         .row-pct { font-family: monospace; color: var(--accent-color); font-weight: 700; }
 
@@ -373,7 +372,6 @@
     let temporarySelection = null;
     let finalRankedMatches = [];
 
-    // Core printer configuration profiles with specific built-in nozzle capacities
     const printerModels = [
         { name: "A1 mini", form: "open", mat: "basic", size: "small", ams: "no", laser: "no", nozzle_setup: "1", price: 149, desc: "Ultra-quiet entry space-saver. Operates a highly functional single active extrusion nozzle setup." },
         { name: "A1 mini Combo (With AMS lite)", form: "open", mat: "basic", size: "small", ams: "yes", laser: "no", nozzle_setup: "1", price: 259, desc: "The entry 4-colour printing setup feeding systematically into a single active hotend assembly." },
@@ -472,8 +470,8 @@
         }
     ];
 
-    // Swapped: Dark mode is active when class is absent (Sun position). Light mode triggers on class addition (Moon position).
-    function toggleTheme() { document.body.classList.toggle('light-theme'); }
+    // Corrected theme controller: Toggling now natively applies 'dark-theme' values to the body element.
+    function toggleTheme() { document.body.classList.toggle('dark-theme'); }
 
     window.onload = function() {
         const saved = localStorage.getItem('bambu_h_selections');
@@ -759,6 +757,7 @@
                 matrix.appendChild(item);
             });
             card.appendChild(matrix);
+            container.appendChild(cap => { });
             container.appendChild(card);
         });
     }
