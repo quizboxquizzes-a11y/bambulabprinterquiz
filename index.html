@@ -72,48 +72,44 @@
         }
 
         .theme-pill-switch {
-    position: relative;
-    width: 54px;
-    height: 28px;
-    background-color: var(--switch-bg);
-    border-radius: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;         /* Perfectly centers icons vertically */
-    justify-content: space-between;
-    padding: 0 7px;              /* Balanced side padding for the icons */
-    box-sizing: border-box;
-    user-select: none;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-}
+            position: relative;
+            width: 54px;
+            height: 28px;
+            background-color: var(--switch-bg);
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7px;
+            box-sizing: border-box;
+            user-select: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
 
-.theme-pill-switch i { 
-    font-size: 11px; 
-    z-index: 2; 
-    line-height: 1;              /* Strips extra invisible space from fonts causing misalignment */
-    display: block;
-}
+        .theme-pill-switch i { 
+            font-size: 11px; 
+            z-index: 2; 
+            line-height: 1;
+            display: block;
+        }
+        .theme-pill-switch .fa-sun { color: #e3b341; }
+        .theme-pill-switch .fa-moon { color: #8b949e; }
 
-.theme-pill-switch .fa-sun { color: #e3b341; }
-.theme-pill-switch .fa-moon { color: #8b949e; }
+        .theme-pill-handle {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background-color: var(--container-bg);
+            border-radius: 50%;
+            z-index: 1;
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
 
-.theme-pill-handle {
-    position: absolute;
-    top: 3px;                    /* Perfectly centers a 22px knob inside a 28px track (28 - 22 = 6 / 2) */
-    left: 3px;
-    width: 22px;
-    height: 22px;
-    background-color: var(--container-bg);
-    border-radius: 50%;
-    z-index: 1;
-    transition: transform 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-/* 54px total width - 22px knob width - 3px left offset - 3px right gap = 26px precise sliding travel */
-body.light-theme .theme-pill-handle { 
-    transform: translateX(26px); 
-}
+        body.light-theme .theme-pill-handle { transform: translateX(26px); }
 
         .quiz-container {
             background-color: var(--container-bg);
@@ -277,7 +273,7 @@ body.light-theme .theme-pill-handle {
         <div class="subtitle">Answer a few simple questions to find your best 3D printer match!</div>
         <div id="resume-container"></div>
         <p style="line-height: 1.5; font-size: 14px; color: var(--text-color); opacity: 0.8; text-align: center; margin-bottom: 24px;">
-            Tell us about your budget, what you want to make, and if you want features like multi-colour printing or built-in laser engraving tools.
+            Tell us about your budget, what you want to make, and if you want features like multi-colour printing or built-in laser tools.
         </p>
         <button class="btn" onclick="startQuiz(false)">
             <span>Start Quiz</span>
@@ -337,9 +333,6 @@ body.light-theme .theme-pill-handle {
         <button class="btn btn-secondary" style="margin-top:16px; width:auto; float:right; padding:6px 12px; font-size:13px;" onclick="closeCompareModal()">Close</button>
     </div>
 </div>
-
-</body>
-</html>
 <script>
     let currentQuestionIndex = 0;
     let userSelections = { max_budget: 3000 }; 
@@ -347,29 +340,29 @@ body.light-theme .theme-pill-handle {
     let temporarySelection = null;
     let finalRankedMatches = [];
 
-    // All printers updated with your specific UK Pricing (£ GBP)
+    // Complete printer matrix loaded with exact user-defined UK baseline pricing
     const printerModels = [
-        // A Series
+        // A Series (Entry-Level Bed-Slingers)
         { name: "A1 mini", form: "open", mat: "basic", size: "small", ams: "no", laser: "no", price: 149, desc: "Super quiet entry-level choice. Perfect for small trinkets, desk space savers, and beginners." },
         { name: "A1 mini Combo (With AMS lite)", form: "open", mat: "basic", size: "small", ams: "yes", laser: "no", price: 259, desc: "The absolute lowest cost method to enjoy high-quality 4-colour standard prints easily." },
         { name: "A1", form: "open", mat: "basic", size: "standard", ams: "no", laser: "no", price: 219, desc: "Full standard size open bed-slinger. Incredibly reliable and easy to maintain for household tasks." },
         { name: "A1 Combo (With AMS lite)", form: "open", mat: "basic", size: "standard", ams: "yes", laser: "no", price: 319, desc: "Highly popular family and maker pick for stress-free multi-colour printing on a standard bed." },
 
-        // P Series
-        { name: "P1P", form: "open-box", mat: "basic", size: "standard", ams: "no", laser: "no", price: 538, desc: "Open-sided high speed core box. Legacy baseline speed performance model." },
+        // P Series (Enclosed CoreXY)
+        { name: "P1P", form: "open-box", mat: "basic", size: "standard", ams: "no", laser: "no", price: 538, desc: "Open-sided high speed core box frame. Legacy baseline performance printing speed variant." },
         { name: "P1S", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", price: 339, desc: "Fully enclosed case configuration. Keeps temperature even to guard prints against shrinking." },
         { name: "P1S Combo (With AMS)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 479, desc: "The absolute best value 'sweet spot' machine for multi-colour projects inside a closed shell." },
         { name: "P2S", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", price: 479, desc: "Refined and updated mid-tier enclosed setup with smoother electronics and reliable operation." },
         { name: "P2S Combo (With AMS)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 699, desc: "Next-generation mid-range favorite with native multi-colour feeding out of the box." },
 
-        // X Series
+        // X Series (Flagship Performance)
         { name: "X1-Carbon", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", price: 1179, desc: "Premium flagship desk workstation. Features AI camera failure detection and robust metal parts." },
-        { name: "X1-Carbon Combo (With AMS)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 1439, desc: "The iconic multi-colour professional workspace standard. Excellent all-rounder." },
+        { name: "X1-Carbon Combo (With AMS)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 1439, desc: "The iconic multi-colour professional workspace standard. Excellent premium all-rounder." },
         { name: "X1E", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 1111, desc: "Enterprise machine adding an actively heated chamber and secure cloud-free LAN data hookups." },
         { name: "X2D", form: "enclosed", mat: "advanced", size: "large", ams: "no", laser: "no", price: 569, desc: "Next-gen flagship frame scaling up performance room for oversized components." },
         { name: "X2D Combo (With AMS)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", price: 769, desc: "Flagship large-format printer pre-bundled with a streamlined 4-spool automatic filament box." },
 
-        // H Series
+        // H Series (Large Format & Multi-Material)
         { name: "H2S Standard", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", price: 999, desc: "High-speed enclosed printer setup. Great for solid, advanced engineering prints." },
         { name: "H2S Combo (With heated AMS 2 Pro)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 1199, desc: "Enclosed performance printing bundled with an actively heated multi-colour unit." },
         { name: "H2S Laser Full Combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "yes", price: 1799, desc: "The complete multi-colour tool package featuring an integrated laser toolhead module." },
@@ -430,11 +423,12 @@ body.light-theme .theme-pill-handle {
         },
         {
             key: "laser_needed",
-            text: "Do you need a hybrid laser module built-in?",
-            explain: "Select yes if you want a dual hybrid machine that can 3D print and cut/engrave wood or leather materials.",
+            text: "Do you need laser engraving or cutting capabilities?",
+            explain: "Select standard if you only want a traditional 3D printer. Choose a hybrid option if you want built-in lasers capable of engraving or cutting wood, acrylic, and leather.",
             options: [
-                { text: "Yes, I want laser engraving capabilities", icon: "fa-bolt", hint: "Adds toolhead lasers for dual printing and etching tasks.", value: "yes" },
-                { text: "No, just standard 3D printing is fine", icon: "fa-printer", hint: "Dedicated purely to standard plastic layer melting.", value: "no" }
+                { text: "Just standard 3D printing", icon: "fa-printer", hint: "Dedicated purely to standard plastic layer melting. Lowest entry cost.", value: "no" },
+                { text: "Laser Cutting & Engraving (10W)", icon: "fa-bolt", hint: "Adds a 10W hybrid laser toolhead module for light engraving and thin cuts.", value: "yes" },
+                { text: "Laser Cutting & Engraving (40W)", icon: "fa-fire", hint: "Heavy-duty 40W industrial cutting laser for thicker workshop materials.", value: "40w" }
             ]
         }
     ];
@@ -611,12 +605,20 @@ body.light-theme .theme-pill-handle {
         return printerModels.map(model => {
             let score = 0;
             let totalWeights = 0;
+            
             const matrixPoints = { form: f, mat: m, size: s, ams: ams, laser: laser };
             
             Object.keys(matrixPoints).forEach(key => {
                 if (matrixPoints[key] !== undefined) {
                     totalWeights++;
-                    if (model[key] === matrixPoints[key]) score++;
+                    
+                    if (key === 'laser') {
+                        if (matrixPoints[key] === '40w' && model.name.includes('40W')) score++;
+                        else if (matrixPoints[key] === 'yes' && model.laser === 'yes' && !model.name.includes('40W')) score++;
+                        else if (matrixPoints[key] === 'no' && model.laser === 'no') score++;
+                    } else {
+                        if (model[key] === matrixPoints[key]) score++;
+                    }
                 }
             });
 
@@ -674,7 +676,7 @@ body.light-theme .theme-pill-handle {
 
             const title = document.createElement('div');
             title.className = 'result-item-title';
-            title.innerText = `${printer.name} (£${printer.price})`;
+            title.innerText = `${printer.name} (£${printer.price}.00)`;
             card.appendChild(title);
 
             const description = document.createElement('div');
@@ -720,11 +722,11 @@ body.light-theme .theme-pill-handle {
         const table = document.getElementById('compare-table-data');
         table.innerHTML = `
             <tr><th>Feature</th><th>${selectedPrinter.name}</th><th>${benchmark.name} (Top Pick)</th></tr>
-            <tr><td>Standard Price</td><td>£${selectedPrinter.price}</td><td>£${benchmark.price}</td></tr>
+            <tr><td>Standard Price</td><td>£${selectedPrinter.price}.00</td><td>£${benchmark.price}.00</td></tr>
             <tr><td>Build Size Volume</td><td>${selectedPrinter.size.toUpperCase()}</td><td>${benchmark.size.toUpperCase()}</td></tr>
             <tr><td>Fully Enclosed Case</td><td>${selectedPrinter.form === 'enclosed' ? 'Yes' : 'No'}</td><td>${benchmark.form === 'enclosed' ? 'Yes' : 'No'}</td></tr>
             <tr><td>Multi-Colour Unit</td><td>${selectedPrinter.ams === 'yes' ? 'Yes' : 'No'}</td><td>${benchmark.ams === 'yes' ? 'Yes' : 'No'}</td></tr>
-            <tr><td>Laser Toolhead</td><td>${selectedPrinter.laser === 'yes' ? 'Yes' : 'No'}</td><td>${benchmark.laser === 'yes' ? 'Yes' : 'No'}</td></tr>
+            <tr><td>Laser Toolhead</td><td>${selectedPrinter.laser === 'yes' || selectedPrinter.name.includes('40W') ? 'Yes' : 'No'}</td><td>${benchmark.laser === 'yes' || benchmark.name.includes('40W') ? 'Yes' : 'No'}</td></tr>
         `;
         document.getElementById('compare-modal').style.display = 'flex';
     }
@@ -735,7 +737,7 @@ body.light-theme .theme-pill-handle {
         if (!finalRankedMatches.length) return;
         let report = `### 🖨️ My Saved Bambu Lab Printer Recommendations\n`;
         finalRankedMatches.slice(0, 3).forEach((p, idx) => {
-            report += `${idx + 1}. **${p.name}** (£${p.price}) - ${p.pct}% Match\n   - ${p.desc}\n`;
+            report += `${idx + 1}. **${p.name}** (£${p.price}.00) - ${p.pct}% Match\n   - ${p.desc}\n`;
         });
         navigator.clipboard.writeText(report);
         alert("Results copied to clipboard!");
@@ -748,3 +750,4 @@ body.light-theme .theme-pill-handle {
         localStorage.clear();
     }
 </script>
+</html>
