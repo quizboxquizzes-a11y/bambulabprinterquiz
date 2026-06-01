@@ -59,7 +59,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Advanced Feature: Ambient Glow Mechanics */
+/* Ambient Glow Mechanics */
 .ambient-glow {
     position: fixed;
     top: 50%;
@@ -84,7 +84,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* Advanced Feature: Currency Selector Styling */
+/* Currency Selector Styling */
 .currency-select-container {
     display: flex;
     align-items: center;
@@ -101,46 +101,6 @@ body {
     outline: none;
     cursor: pointer;
 }
-
-/* Advanced Feature: iOS Style Switch Toggles */
-.toggle-control-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.toggle-control-group .control-label {
-    font-size: 13px;
-    font-weight: 500;
-    opacity: 0.8;
-}
-.switch-container {
-    position: relative;
-    display: inline-block;
-    width: 42px;
-    height: 24px;
-}
-.switch-container input { opacity: 0; width: 0; height: 0; }
-.switch-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: var(--switch-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 24px;
-    transition: .2s;
-}
-.switch-slider:before {
-    position: absolute;
-    content: "";
-    height: 16px; width: 16px;
-    left: 3px; bottom: 3px;
-    background-color: var(--container-bg);
-    border-radius: 50%;
-    transition: .2s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-input:checked + .switch-slider { background-color: var(--accent-color); border-color: var(--accent-color); }
-input:checked + .switch-slider:before { transform: translateX(18px); }
 
 /* Theme Switch Handles */
 .theme-pill-switch {
@@ -239,11 +199,10 @@ h1 { font-size: 28px; text-align: center; margin-bottom: 8px; letter-spacing: -0
     position: relative;
     transition: border-color 0.2s, background-color 0.2s, transform 0.15s;
 }
-/* Micro-interactions */
 .option-card:hover { background-color: var(--card-hover); transform: scale(1.01); }
 .option-card.selected { border-color: var(--selected-border); background-color: rgba(88, 166, 255, 0.04); box-shadow: 0 0 0 1px var(--selected-border); }
 
-/* Advanced Feature: Custom Radio Indicators */
+/* Custom Radio Indicators */
 .custom-radio-circle {
     width: 18px; height: 18px;
     border: 2px solid var(--border-color);
@@ -313,7 +272,7 @@ body.dark-theme .leaderboard-row { background: rgba(0,0,0,0.2); }
 .loading-title { font-size: 20px; font-weight: 600; color: var(--heading-color); margin-bottom: 8px; }
 .loading-desc { font-size: 14px; color: var(--text-color); opacity: 0.7; }
 
-/* Advanced Feature: Checklist Bar layout */
+/* Checklist Bar layout */
 .comparison-bar {
     background: var(--card-hover);
     border: 1px dashed var(--border-color);
@@ -350,7 +309,7 @@ body.dark-theme .leaderboard-row { background: rgba(0,0,0,0.2); }
 .mat-pass { background-color: var(--tag-pass); color: var(--tag-pass-text); font-weight: 500; }
 .mat-fail { background-color: var(--tag-fail); color: var(--tag-fail-text); }
 
-/* Advanced Feature: Filament Flush Calculator Widget Panel */
+/* Filament Flush Calculator Widget Panel */
 .flush-calc-card {
     background: linear-gradient(135deg, rgba(9, 105, 218, 0.05) 0%, rgba(31, 136, 61, 0.03) 100%);
     border: 1px solid var(--selected-border);
@@ -384,7 +343,7 @@ body.dark-theme .leaderboard-row { background: rgba(0,0,0,0.2); }
 .compare-table th, .compare-table td { border: 1px solid var(--border-color); padding: 12px; text-align: left; }
 .compare-table th { background: var(--card-hover); color: var(--heading-color); font-weight: 600; }
 
-/* Advanced Feature: Print Volume Box Visualizer */
+/* Print Volume Box Visualizer */
 .volume-visualizer-section {
     background: var(--card-hover);
     padding: 14px;
