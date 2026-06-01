@@ -3,242 +3,381 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bambu Lab Printer Selector</title>
+    <title>Bambu Lab Printer Matcher</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖨️</text></svg>">
     <style>
         :root {
             --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --border-color: #30363d;
+            --container-bg: #161b22;
             --text-color: #c9d1d9;
             --accent-color: #2ea44f;
-            --accent-hover: #2c974b;
+            --accent-hover: #238636;
+            --border-color: #30363d;
+            --card-hover: #21262d;
         }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
             box-sizing: border-box;
         }
+
         .quiz-container {
-            background-color: var(--card-bg);
+            background-color: var(--container-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 32px;
-            max-width: 600px;
             width: 100%;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            max-width: 600px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
+
         h1 {
             font-size: 24px;
             font-weight: 600;
-            margin-top: 0;
-            margin-bottom: 24px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #fff;
         }
-        .question {
+
+        .subtitle {
+            text-align: center;
+            color: #8b949e;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .screen {
             display: none;
         }
-        .question.active {
+
+        .screen.active {
             display: block;
         }
-        .progress {
-            font-size: 14px;
-            color: #8b949e;
-            margin-bottom: 8px;
-        }
-        .question-text {
-            font-size: 18px;
+
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: 1px solid rgba(240,246,252,0.1);
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 16px;
             font-weight: 500;
-            margin-bottom: 20px;
+            cursor: pointer;
+            width: 100%;
+            display: inline-block;
+            text-align: center;
+            box-sizing: border-box;
+            transition: background 0.2s;
         }
-        .options {
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .options-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
+            margin-top: 20px;
         }
-        .btn {
-            background-color: #21262d;
+
+        .option-card {
+            background-color: var(--container-bg);
             border: 1px solid var(--border-color);
-            color: #c9d1d9;
-            padding: 12px 16px;
-            font-size: 16px;
-            font-weight: 500;
             border-radius: 6px;
+            padding: 16px;
             cursor: pointer;
+            transition: all 0.2s;
             text-align: left;
-            transition: all 0.2s ease;
         }
-        .btn:hover {
-            background-color: #30363d;
+
+        .option-card:hover {
+            background-color: var(--card-hover);
             border-color: #8b949e;
         }
-        .btn-submit {
+
+        .progress-bar-container {
+            background-color: var(--border-color);
+            height: 4px;
+            border-radius: 2px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
             background-color: var(--accent-color);
-            color: #ffffff;
-            border: 1px solid rgba(27,31,36,0.15);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .result-box {
+            border: 1px solid var(--accent-color);
+            background-color: rgba(46, 164, 79, 0.1);
+            padding: 20px;
+            border-radius: 6px;
             text-align: center;
+            margin-top: 20px;
         }
-        .btn-submit:hover {
-            background-color: var(--accent-hover);
-        }
+
         .result-title {
             font-size: 22px;
-            font-weight: 600;
-            color: #58a6ff;
-            margin-bottom: 12px;
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 10px;
         }
-        .result-desc {
-            font-size: 16px;
-            margin-bottom: 24px;
+
+        .feature-tag {
+            display: inline-block;
+            background: #21262d;
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 4px;
         }
     </style>
 </head>
 <body>
 
 <div class="quiz-container">
-    <h1>Bambu Lab Printer Selector</h1>
-    
-    <!-- Question 1 -->
-    <div class="question active" id="q1">
-        <div class="progress">Question 1 of 4</div>
-        <div class="question-text">What is your primary budget and performance requirement?</div>
-        <div class="options">
-            <button class="btn" onclick="nextQuestion('q1', 'q2', 'entry')">Entry-Level Bed-Slinger (Budget-Friendly)</button>
-            <button class="btn" onclick="nextQuestion('q1', 'q2', 'mid')">Enclosed CoreXY (Balanced Value & Performance)</button>
-            <button class="btn" onclick="nextQuestion('q1', 'q2', 'flagship')">Flagship Performance (Premium features)</button>
-            <button class="btn" onclick="nextQuestion('q1', 'q2', 'h_series')">Next-Gen Advanced H-Series (Max Capability)</button>
-        </div>
+    <div id="intro-screen" class="screen active">
+        <h1>Bambu Lab Picker</h1>
+        <div class="subtitle">Find your ideal hardware configuration in less than 2 minutes.</div>
+        <p style="line-height: 1.6; font-size: 14px; color: #8b949e; text-align: center; margin-bottom: 30px;">
+            With standard variants, combo setups featuring an AMS, specialized tool-heads, and heavy-duty industrial configurations, this questionnaire filters out your requirements step-by-step.
+        </p>
+        <button class="btn" onclick="startQuiz()">Start Configuration</button>
     </div>
 
-    <!-- Question 2 -->
-    <div class="question" id="q2">
-        <div class="progress">Question 2 of 4</div>
-        <div class="question-text">Do you need multi-colour or multi-material printing capabilities?</div>
-        <div class="options">
-            <button class="btn" onclick="nextQuestion('q2', 'q3', 'single')">No, single material is fine</button>
-            <button class="btn" onclick="nextQuestion('q2', 'q3', 'multi')">Yes, automatic material switching is essential</button>
+    <div id="quiz-screen" class="screen">
+        <div class="progress-bar-container">
+            <div id="progress" class="progress-bar"></div>
         </div>
+        <h3 id="question-text" style="color: #fff; margin-top: 0;">Question text goes here?</h3>
+        <div id="options-container" class="options-list"></div>
     </div>
 
-    <!-- Question 3 -->
-    <div class="question" id="q3">
-        <div class="progress">Question 3 of 4</div>
-        <div class="question-text">What kind of build volume or form factor do you prefer?</div>
-        <div class="options">
-            <button class="btn" onclick="nextQuestion('q3', 'q4', 'small')">Small and compact (Space saver)</button>
-            <button class="btn" onclick="nextQuestion('q3', 'q4', 'standard')">Standard desktop size</button>
-            <button class="btn" onclick="nextQuestion('q3', 'q4', 'large')">Maximum workspace / Industrial grade</button>
+    <div id="results-screen" class="screen">
+        <h1>Your Match</h1>
+        <div class="subtitle">Based on your precise material and workflow requirements:</div>
+        <div class="result-box">
+            <div id="match-name" class="result-title">Calculating...</div>
         </div>
-    </div>
-
-    <!-- Question 4 -->
-    <div class="question" id="q4">
-        <div class="progress">Question 4 of 4</div>
-        <div class="question-text">Do you need advanced features like laser engraving/cutting or heated filament storage?</div>
-        <div class="options">
-            <button class="btn" onclick="calculateResult('none')">No, just pure 3D printing</button>
-            <button class="btn" onclick="calculateResult('laser_10w')">Yes, laser capabilities (10W entry)</button>
-            <button class="btn" onclick="calculateResult('laser_40w')">Yes, powerful laser capabilities (40W pro)</button>
-            <button class="btn" onclick="calculateResult('heated_ams')">Yes, advanced heated AMS storage</button>
-        </div>
-    </div>
-
-    <!-- Result Screen -->
-    <div class="question" id="result-screen">
-        <div class="result-title">Your Recommended Printer:</div>
-        <div class="result-desc" id="printer-result">Calculating...</div>
-        <button class="btn btn-submit" onclick="resetQuiz()">Take Quiz Again</button>
+        <div id="match-details" style="margin-top: 20px; font-size: 14px; color: #8b949e; line-height: 1.5;"></div>
+        <button class="btn" style="margin-top: 24px; background-color: #21262d; color: #c9d1d9; border-color: var(--border-color);" onclick="resetQuiz()">Restart Quiz</button>
     </div>
 </div>
 
 <script>
-    let answers = {
-        tier: '',
-        mms: '',
-        size: '',
-        extras: ''
-    };
+    // State management
+    let currentQuestionIndex = 0;
+    let userSelections = {};
 
-    function nextQuestion(currentId, nextId, choice) {
-        if (currentId === 'q1') answers.tier = choice;
-        if (currentId === 'q2') answers.mms = choice;
-        if (currentId === 'q3') answers.size = choice;
+    const questions = [
+        {
+            key: "form_factor",
+            text: "What tier of print architecture and workspace envelope do you need?",
+            options: [
+                { text: "Entry-Level Bed-Slinger (Compact & Open)", value: "A" },
+                { text: "Mid-to-High Tier Enclosed CoreXY (Fast, enclosed desktop sizes)", value: "P_X" },
+                { text: "Large Format / Enterprise Platform (Massive volume, high-temp environments)", value: "H" }
+            ]
+        },
+        {
+            key: "materials",
+            text: "What type of technical filaments do you intend to run regularly?",
+            options: [
+                { text: "Basic elements (PLA, PETG, TPU Only)", value: "basic" },
+                { text: "Enclosed engineering parts (ABS, ASA, PA, PC, Carbon Fiber)", value: "advanced" },
+                { text: "Ultra-spec engineering / Cross-Material systems (Active 65°C chamber or multi-nozzle swaps)", value: "extreme" }
+            ]
+        },
+        {
+            key: "budget_tier",
+            text: "Which class of machine fits your deployment setting?",
+            options: [
+                { text: "Cost-sensitive / Desktop Hobbyist", value: "budget" },
+                { text: "High-Performance Workhorse (Maximum speed & standard production)", value: "performance" },
+                { text: "Enterprise Flagship / Lab Environment (Advanced data compliance, active heating)", value: "flagship" }
+            ]
+        },
+        {
+            key: "size_need",
+            text: "What are your minimum build volume expectations?",
+            options: [
+                { text: "Small format is fine (Up to 180mm³)", value: "small" },
+                { text: "Standard desktop format (Around 256mm³)", value: "standard" },
+                { text: "Over-sized workspace volume (Up to 330mm³)", value: "large" }
+            ]
+        },
+        {
+            key: "ams_needed",
+            text: "Do you require an automatic material configuration system (AMS) for multi-color or support material printing?",
+            options: [
+                { text: "Yes, I want the system bundled with an AMS unit", value: "yes" },
+                { text: "No, standalone single-spool printing is sufficient", value: "no" }
+            ]
+        },
+        {
+            key: "laser_needed",
+            text: "Do you need integrated laser engraving/cutting hardware modules?",
+            options: [
+                { text: "No laser functionality needed", value: "none" },
+                { text: "Yes, standard 10W entry laser utility", value: "10w" },
+                { text: "Yes, high-power 40W production laser utility", value: "40w" }
+            ]
+        }
+    ];
 
-        document.getElementById(currentId).classList.remove('active');
-        document.getElementById(nextId).classList.add('active');
+    function startQuiz() {
+        document.getElementById('intro-screen').classList.remove('active');
+        document.getElementById('quiz-screen').classList.add('active');
+        currentQuestionIndex = 0;
+        userSelections = {};
+        renderQuestion();
     }
 
-    function calculateResult(choice) {
-        answers.extras = choice;
-        document.getElementById('q4').classList.remove('active');
-        document.getElementById('result-screen').classList.add('active');
+    function renderQuestion() {
+        if (currentQuestionIndex >= questions.length) {
+            calculateResult();
+            return;
+        }
 
-        let result = "";
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-text').innerText = q.text;
+        
+        // Progress display
+        const progressPercent = (currentQuestionIndex / questions.length) * 100;
+        document.getElementById('progress').style.width = `${progressPercent}%`;
 
-        // Logic routing based on user input tier
-        if (answers.tier === 'entry') {
-            if (answers.size === 'small') {
-                result = answers.mms === 'multi' ? "A1 mini Combo (With AMS lite)" : "A1 mini";
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        q.options.forEach(opt => {
+            const card = document.createElement('div');
+            card.className = 'option-card';
+            card.innerText = opt.text;
+            card.onclick = () => selectOption(q.key, opt.value);
+            optionsContainer.appendChild(card);
+        });
+    }
+
+    function selectOption(key, value) {
+        userSelections[key] = value;
+        currentQuestionIndex++;
+        renderQuestion();
+    }
+
+    function calculateResult() {
+        document.getElementById('quiz-screen').classList.remove('active');
+        document.getElementById('results-screen').classList.add('active');
+
+        let match = "P1S Combo (With AMS)"; // Safe default
+        let details = "";
+
+        const f = userSelections.form_factor;
+        const m = userSelections.materials;
+        const b = userSelections.budget_tier;
+        const s = userSelections.size_need;
+        const ams = userSelections.ams_needed;
+        const laser = userSelections.laser_needed;
+
+        // Logic Matrix for 24 specific outcomes
+        if (f === "A" || s === "small" || (b === "budget" && f !== "H")) {
+            // A Series Family
+            if (s === "small") {
+                match = (ams === "yes") ? "A1 mini Combo (With AMS lite)" : "A1 mini";
+                details = "Perfect entry point. Compact footprint, highly reliable bedslinger architecture tailored for PLA/PETG workflows.";
             } else {
-                result = answers.mms === 'multi' ? "A1 Combo (With AMS lite)" : "A1";
+                match = (ams === "yes") ? "A1 Combo (With AMS lite)" : "A1";
+                details = "Full-sized entry setup offering toolless nozzle swaps and quiet operation across standard filaments.";
             }
         } 
-        else if (answers.tier === 'mid') {
-            if (answers.extras === 'heated_ams') {
-                result = "P2S Combo (With AMS)";
-            } else if (answers.mms === 'multi') {
-                result = "P1S Combo (With AMS)";
+        else if (f === "H" || s === "large" || m === "extreme") {
+            // H Series Heavy Duty & Enterprise Platforms
+            if (m === "extreme" || b === "flagship") {
+                // H2C Tool-changing Core
+                if (laser === "10w") match = "H2C Laser Full Combo (10W)";
+                else if (laser === "40w") match = "H2C Laser Full Combo (40W)";
+                else match = "H2C Vortek Combo (With heated AMS 2 Pro)";
+                details = "Flagship multi-material engineering monster. Uses the zero-waste induction heated hotend changing framework to avoid filament poop.";
+            } else if (b === "performance") {
+                // H2D Mid-Heavy Line
+                if (laser === "10w" || laser === "40w") match = "H2D Laser Combo";
+                else if (ams === "yes") match = "H2D Combo (With heated AMS 2 Pro)";
+                else match = "H2D Standard";
+                details = "Large format multi-material solution suited for professional designers demanding industrial-grade volume and consistency.";
             } else {
-                // Default mid choices
-                if (answers.size === 'small') result = "P1P";
-                else result = "P1S";
+                // H2S Base Large Line
+                if (laser === "10w" || laser === "40w") match = "H2S Laser Full Combo";
+                else if (ams === "yes") match = "H2S Combo (With heated AMS 2 Pro)";
+                else match = "H2S Standard";
+                details = "High-volume structural manufacturing variant optimizing large-scale printing values at a reduced platform price point.";
+            }
+            
+            // Absolute catch-all override override for explicit pro requirements
+            if (b === "flagship" && ams === "no" && laser === "none" && m === "advanced") {
+                match = "H2D Pro";
+                details = "Data-secure standalone enterprise device designed for engineering environments requiring enclosed high-temp operations.";
             }
         } 
-        else if (answers.tier === 'flagship') {
-            if (answers.mms === 'multi') {
-                result = answers.size === 'large' ? "X2D Combo (With AMS)" : "X1-Carbon Combo (With AMS)";
+        else {
+            // CoreXY Standard Desktops (X & P Series)
+            if (b === "flagship" || m === "advanced") {
+                if (b === "flagship" && m === "advanced" && ams === "no") {
+                    match = "X1E";
+                    details = "Enterprise security platform with network filtering, active heating, and high-temp printing capabilities.";
+                } else {
+                    // X Series / X2D Lineup
+                    // Check if they want the newest dual-nozzle architecture vs classic single nozzle flagships
+                    if (ams === "yes") {
+                        match = (b === "flagship") ? "X2D Combo (With AMS)" : "X1-Carbon Combo (With AMS)";
+                    } else {
+                        match = (b === "flagship") ? "X2D" : "X1-Carbon";
+                    }
+                    details = "Flagship performance core. Features high-temp component optimization, AI failure tracking systems, and elite mechanical frame engineering.";
+                }
             } else {
-                if (answers.size === 'large') result = "X2D";
-                else if (answers.extras === 'heated_ams') result = "X1E";
-                else result = "X1-Carbon";
-            }
-        } 
-        else if (answers.tier === 'h_series') {
-            // H-Series advanced tier logic split by type
-            if (answers.extras === 'laser_40w') {
-                result = "H2C Laser Full Combo (40W)";
-            } else if (answers.extras === 'laser_10w') {
-                result = "H2C Laser Full Combo (10W)";
-            } else if (answers.size === 'large') {
-                if (answers.extras === 'heated_ams') result = "H2D Combo (With heated AMS 2 Pro)";
-                else if (answers.mms === 'multi') result = "H2D Laser Combo";
-                else result = "H2D Pro";
-            } else {
-                // Default H2S / H2C pathways
-                if (answers.extras === 'heated_ams') result = "H2S Combo (With heated AMS 2 Pro)";
-                else if (answers.mms === 'multi') result = "H2S Laser Full Combo";
-                else result = "H2S Standard";
+                // P Series Desktop Workhorses
+                if (b === "budget") {
+                    match = "P1P";
+                    details = "Stripped-down, open-frame CoreXY performance beast built for speed-focused enthusiasts building their own modules.";
+                } else {
+                    // P1S vs P2S updates
+                    if (ams === "yes") {
+                        match = (b === "performance") ? "P2S Combo (With AMS)" : "P1S Combo (With AMS)";
+                    } else {
+                        match = (b === "performance") ? "P2S" : "P1S";
+                    }
+                    details = "The premier consumer baseline. Enclosed structural control delivers impeccable ABS/ASA/PLA capabilities at phenomenal speeds.";
+                }
             }
         }
 
-        // Fallback safety check
-        if (!result) result = "P1S Combo (With AMS) - A highly versatile option for most users!";
-
-        document.getElementById('printer-result').innerText = result;
+        document.getElementById('match-name').innerText = match;
+        document.getElementById('match-details').innerHTML = `
+            <p>${details}</p>
+            <div style="margin-top:15px;">
+                <span class="feature-tag">Form Factor Tier: ${f}</span>
+                <span class="feature-tag">Material Support: ${m}</span>
+                <span class="feature-tag">AMS System: ${ams.toUpperCase()}</span>
+                <span class="feature-tag">Laser Module: ${laser.toUpperCase()}</span>
+            </div>
+        `;
     }
 
     function resetQuiz() {
-        answers = { tier: '', mms: '', size: '', extras: '' };
-        document.getElementById('result-screen').classList.remove('active');
-        document.getElementById('q1').classList.add('active');
+        document.getElementById('results-screen').classList.remove('active');
+        document.getElementById('intro-screen').classList.add('active');
     }
 </script>
 
