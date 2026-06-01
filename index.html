@@ -288,7 +288,7 @@
         <div class="subtitle">Answer a few quick questions to identify your perfect 3D hardware match</div>
         <div id="resume-container"></div>
         <p style="line-height: 1.6; font-size: 15px; color: var(--text-color); opacity: 0.85; text-align: center; margin-bottom: 32px;">
-            Input your budget range, material preferences, multi-colour capabilities, or hybrid feature paths to calculate and match across our entire machine catalog.
+            Input your budget range, tool requirements, and nozzle swapping setup preferences to dynamically match and score your machine configuration.
         </p>
         <button class="btn" onclick="startQuiz(false)">
             <span>Begin Hardware Assessment</span>
@@ -355,39 +355,36 @@
     let temporarySelection = null;
     let finalRankedMatches = [];
 
-    // Complete printer matrix loaded with exact user-defined UK baseline pricing
+    // Base printer hardware matrix mapped with hotend nozzle style flags
+    // nozzle_swap types: "quick" (A-series quick-swap), "standard" (V2/P1/X1 hex tool installation), "easy" (Next-gen toolless snap)
     const printerModels = [
-        // A Series (Entry-Level Bed-Slingers)
-        { name: "A1 mini", form: "open", mat: "basic", size: "small", ams: "no", laser: "no", price: 149, desc: "Super quiet entry-level choice. Perfect for small trinkets, desk space savers, and beginners." },
-        { name: "A1 mini Combo (With AMS lite)", form: "open", mat: "basic", size: "small", ams: "yes", laser: "no", price: 259, desc: "The absolute lowest cost method to enjoy high-quality 4-colour standard prints easily." },
-        { name: "A1", form: "open", mat: "basic", size: "standard", ams: "no", laser: "no", price: 219, desc: "Full standard size open bed-slinger. Incredibly reliable and easy to maintain for household tasks." },
-        { name: "A1 Combo (With AMS lite)", form: "open", mat: "basic", size: "standard", ams: "yes", laser: "no", price: 319, desc: "Highly popular family and maker pick for stress-free multi-colour printing on a gantry bed." },
+        { name: "A1 mini", form: "open", mat: "basic", size: "small", ams: "no", laser: "no", nozzle_swap: "quick", price: 149, desc: "Super quiet entry-level choice. Features the premium toolless magnetic quick-swap nozzle assembly." },
+        { name: "A1 mini Combo (With AMS lite)", form: "open", mat: "basic", size: "small", ams: "yes", laser: "no", nozzle_swap: "quick", price: 259, desc: "The lowest cost entry to 4-colour printing using a highly responsive quick-change hotend design." },
+        { name: "A1", form: "open", mat: "basic", size: "standard", ams: "no", laser: "no", nozzle_swap: "quick", price: 219, desc: "Full-size open bed-slinger featuring magnetic clip-on quick-swap toolheads." },
+        { name: "A1 Combo (With AMS lite)", form: "open", mat: "basic", size: "standard", ams: "yes", laser: "no", nozzle_swap: "quick", price: 319, desc: "Highly popular family print platform with rapid multi-colour switching and toolless nozzle changes." },
 
-        // P Series (Enclosed CoreXY)
-        { name: "P1P", form: "open-box", mat: "basic", size: "standard", ams: "no", laser: "no", price: 538, desc: "Open-sided high speed core box frame. Legacy performance printing speed variant." },
-        { name: "P1S", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", price: 339, desc: "Fully enclosed case configuration. Keeps temperature even to guard prints against shrinking." },
-        { name: "P1S Combo (With AMS)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 479, desc: "The absolute best value 'sweet spot' machine for multi-colour projects inside a closed shell." },
-        { name: "P2S", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", price: 479, desc: "Refined and updated mid-tier enclosed setup with smoother electronics and reliable operation." },
-        { name: "P2S Combo (With AMS)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 699, desc: "Next-generation mid-range favorite with native multi-colour feeding out of the box." },
+        { name: "P1P", form: "open-box", mat: "basic", size: "standard", ams: "no", laser: "no", nozzle_swap: "standard", price: 538, desc: "High-speed core box frame. Employs a fixed standard heater block requiring careful hex screw tool steps to change." },
+        { name: "P1S", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", nozzle_swap: "standard", price: 339, desc: "Enclosed setup guarding prints against warping. Built with a standard hex tool screw nozzle block." },
+        { name: "P1S Combo (With AMS)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_swap: "standard", price: 479, desc: "Excellent value multi-colour workhorse configuration using standard screw-secured hotends." },
+        { name: "P2S", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", nozzle_swap: "easy", price: 479, desc: "Refined mid-tier enclosed layout featuring an upgraded toolless snap-locking nozzle mechanism." },
+        { name: "P2S Combo (With AMS)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_swap: "easy", price: 699, desc: "Next-gen mid-range enclosed favorite with native multi-colour feeding and snappy easy-change nozzle system." },
 
-        // X Series (Flagship Performance)
-        { name: "X1-Carbon", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", price: 1179, desc: "Premium flagship desk workstation. Features AI camera failure detection and robust metal parts." },
-        { name: "X1-Carbon Combo (With AMS)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 1439, desc: "The iconic multi-colour professional workspace standard. Excellent premium all-rounder." },
-        { name: "X1E", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 1111, desc: "Enterprise machine adding an actively heated chamber and secure cloud-free LAN data hookups." },
-        { name: "X2D", form: "enclosed", mat: "advanced", size: "large", ams: "no", laser: "no", price: 569, desc: "Next-gen flagship gantry platform scaling up physical capacity room for engineering models." },
-        { name: "X2D Combo (With AMS)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", price: 769, desc: "Flagship large-format printer pre-bundled with a streamlined 4-spool automatic filament box." },
+        { name: "X1-Carbon", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", nozzle_swap: "standard", price: 1179, desc: "Premium flagship workstation with AI monitoring and standard rugged tool-installed hardened steel nozzles." },
+        { name: "X1-Carbon Combo (With AMS)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_swap: "standard", price: 1439, desc: "The iconic multi-colour professional platform utilizing structural standard hex hotend changes." },
+        { name: "X1E", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_swap: "standard", price: 1111, desc: "Enterprise platform with an actively heated chamber using standard high-temp hex hotends." },
+        { name: "X2D", form: "enclosed", mat: "advanced", size: "large", ams: "no", laser: "no", nozzle_swap: "easy", price: 569, desc: "Next-gen flagship large gantry platform with integrated easy-release locking toolheads." },
+        { name: "X2D Combo (With AMS)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_swap: "easy", price: 769, desc: "Large flagship build bundle with a streamlined automatic filament switcher and snap-lock nozzles." },
 
-        // H Series (Large Format & Multi-Material)
-        { name: "H2S Standard", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", price: 999, desc: "High-speed enclosed printer setup. Great for solid, advanced engineering prints." },
-        { name: "H2S Combo (With heated AMS 2 Pro)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", price: 1199, desc: "Enclosed performance printing bundled with an actively heated multi-colour unit." },
-        { name: "H2S Laser Full Combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "yes", price: 1799, desc: "The complete multi-colour tool package featuring an integrated laser toolhead module." },
-        { name: "H2D Standard", form: "enclosed", mat: "advanced", size: "large", ams: "no", laser: "no", price: 1449, desc: "Spacious enclosed workspace built for printing larger engineering structures securely." },
-        { name: "H2D Combo (With heated AMS 2 Pro)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", price: 1649, desc: "Combines a massive build area with heated multi-colour material loading automation." },
-        { name: "H2D Laser Combo", form: "enclosed", mat: "advanced", size: "large", ams: "no", laser: "yes", price: 2149, desc: "A large-format tool combining heavy plastic printing and helpful laser detailing." },
-        { name: "H2D Pro", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", price: 1769, desc: "Upgraded luxury specs for high-demand workspace projects and large parts." },
-        { name: "H2C Vortek Combo (With heated AMS 2 Pro)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", price: 1999, desc: "Ultra-fast premium industrial core mechanics bundled with a heated material switcher." },
-        { name: "H2C Laser Full Combo (10W)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "yes", price: 2499, desc: "Industrial build body loaded with multi-colour feeding and a precise 10W hybrid laser tool." },
-        { name: "H2C Laser Full Combo (40W)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "yes", price: 2999, desc: "The ultimate industrial workshop master option with a heavy-duty 40W cutting laser." }
+        { name: "H2S Standard", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", nozzle_swap: "easy", price: 999, desc: "High-speed enclosed printer setup with toolless structural easy-swap nozzle sockets." },
+        { name: "H2S Combo (With heated AMS 2 Pro)", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_swap: "easy", price: 1199, desc: "Enclosed performance printing bundled with active heating and easy-snap nozzle modules." },
+        { name: "H2S Laser Full Combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "yes", nozzle_swap: "easy", price: 1799, desc: "Complete multi-colour tool package featuring an integrated quick-securing laser assembly and nozzle array." },
+        { name: "H2D Standard", form: "enclosed", mat: "advanced", size: "large", ams: "no", laser: "no", nozzle_swap: "easy", price: 1449, desc: "Spacious enclosed workspace built with quick toolless hotend release slots for fast swaps." },
+        { name: "H2D Combo (With heated AMS 2 Pro)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_swap: "easy", price: 1649, desc: "Combines a massive build area, heated material switching, and rapid easy-change nozzles." },
+        { name: "H2D Laser Combo", form: "enclosed", mat: "advanced", size: "large", ams: "no", laser: "yes", nozzle_swap: "easy", price: 2149, desc: "Large-format platform matching heavy plastic extrusion options with easy snap toolheads." },
+        { name: "H2D Pro", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_swap: "easy", price: 1769, desc: "Upgraded luxury hardware specifications with optimized easy toolless maintenance sockets." },
+        { name: "H2C Vortek Combo (With heated AMS 2 Pro)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_swap: "easy", price: 1999, desc: "Ultra-fast premium industrial core mechanics bundled with a heated material switcher and toolless nozzles." },
+        { name: "H2C Laser Full Combo (10W)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "yes", nozzle_swap: "easy", price: 2499, desc: "Industrial build body loaded with multi-colour feeding, 10W laser tool, and snap-lock nozzle assembly." },
+        { name: "H2C Laser Full Combo (40W)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "yes", nozzle_swap: "easy", price: 2999, desc: "The ultimate industrial workshop master option with a heavy-duty 40W cutting laser and rapid easy-swap toolheads." }
     ];
 
     const questions = [
@@ -425,6 +422,16 @@
                 { text: "Small (Up to 180mm area)", icon: "fa-compress", hint: "Ultra-compact footprint. Best for custom jewelry, gears, and figures.", value: "small" },
                 { text: "Standard (Around 256mm area)", icon: "fa-expand", hint: "The regular industry size standard. Fits most structural community models.", value: "standard" },
                 { text: "Large-Scale (Over 300mm area)", icon: "fa-maximize", hint: "Industrial volume capacity for full-scale helmet designs and thick casings.", value: "large" }
+            ]
+        },
+        {
+            key: "nozzle_style",
+            text: "How frequently do you plan to change nozzle sizes?",
+            explain: "Varying nozzle diameters alters resolution and structural print speed. Select your level of tool maintenance preference.",
+            options: [
+                { text: "Standard Tool Maintenance", icon: "fa-wrench", hint: "Happy using manual hex tools and thermal tightening steps to secure the block.", value: "standard" },
+                { text: "Quick Magnetic Release", icon: "fa-magnet", hint: "Prefers clip-on hotends that snap off instantly without structural tools.", value: "quick" },
+                { text: "Easy-Lock Next-Gen Sockets", icon: "fa-toggle-on", hint: "Wants premium toolless quick-turn lock mechanisms for rapid caliber shifts.", value: "easy" }
             ]
         },
         {
@@ -584,8 +591,8 @@
             warnText.innerText = "Notice: Open gantries shed thermal currents rapidly. Advanced materials risk layer separation without enclosing modifications.";
             warnBox.style.display = 'flex';
         }
-        if (currentKey === 'max_budget' && currentValue < 300) {
-            warnText.innerText = "Financial Bounds: Lower pricing targets focus sorting metrics towards compact multi-material configurations.";
+        if (currentKey === 'nozzle_style' && currentValue === 'quick' && userSelections['materials'] === 'advanced') {
+            warnText.innerText = "Compatibility Note: Rapid pull-out magnetic quick-swaps are structurally native to open-gantry consumer architectures.";
             warnBox.style.display = 'flex';
         }
     }
@@ -614,6 +621,7 @@
         const f = userSelections.form_factor;
         const m = userSelections.materials;
         const s = userSelections.size_need;
+        const nz = userSelections.nozzle_style;
         const ams = userSelections.ams_needed;
         const laser = userSelections.laser_needed;
 
@@ -621,7 +629,7 @@
             let score = 0;
             let totalWeights = 0;
             
-            const matrixPoints = { form: f, mat: m, size: s, ams: ams, laser: laser };
+            const matrixPoints = { form: f, mat: m, size: s, nozzle_swap: nz, ams: ams, laser: laser };
             
             Object.keys(matrixPoints).forEach(key => {
                 if (matrixPoints[key] !== undefined) { totalWeights++; }
@@ -643,7 +651,6 @@
         }).sort((x, y) => y.pct - x.pct);
     }
 
-    // Leaderboard Expanded to precisely compute and track top 5 standings simultaneously
     function updateSidebarAndStatus() {
         const statusBox = document.getElementById('status-box');
         const s = userSelections.size_need;
@@ -656,7 +663,7 @@
         const leaderboard = document.getElementById('leaderboard');
         leaderboard.innerHTML = '';
         
-        // Extended slicing array boundary to feed the first 5 elements
+        // Dynamic display of the first 5 scoring array positions simultaneously
         ranked.slice(0, 5).forEach((item, idx) => {
             const row = document.createElement('div');
             row.className = `leaderboard-row ${idx === 0 ? 'top-tier' : ''}`;
@@ -741,7 +748,7 @@
             <tr><td>Build Chamber Scale</td><td>${selectedPrinter.size.toUpperCase()}</td><td>${benchmark.size.toUpperCase()}</td></tr>
             <tr><td>Enclosed Shell Layout</td><td>${selectedPrinter.form === 'enclosed' ? 'Yes' : 'No'}</td><td>${benchmark.form === 'enclosed' ? 'Yes' : 'No'}</td></tr>
             <tr><td>Multi-Filament Support</td><td>${selectedPrinter.ams === 'yes' ? 'Yes' : 'No'}</td><td>${benchmark.ams === 'yes' ? 'Yes' : 'No'}</td></tr>
-            <tr><td>Hybrid Laser Toolhead</td><td>${selectedPrinter.laser === 'yes' || selectedPrinter.name.includes('40W') ? 'Yes' : 'No'}</td><td>${benchmark.laser === 'yes' || benchmark.name.includes('40W') ? 'Yes' : 'No'}</td></tr>
+            <tr><td>Nozzle Swapping Axis</td><td>${selectedPrinter.nozzle_swap.toUpperCase()}</td><td>${benchmark.nozzle_swap.toUpperCase()}</td></tr>
         `;
         document.getElementById('compare-modal').style.display = 'flex';
     }
