@@ -8,34 +8,33 @@ let finalRankedMatches = [];
 let currentCurrency = 'GBP';
 let currencySymbols = { GBP: '£', USD: '$', EUR: '€' };
 let currencyRates = { GBP: 1.0, USD: 1.28, EUR: 1.18 };
-let budgetIsStrict = false;
 let markedModelCompareList = [];
 
 const printerModels = [
     { name: "A1 mini", form: "open", mat: "basic", size: "small", ams: "no", laser: "no", nozzle_setup: "1", price: 149, desc: "Ultra-quiet entry space-saver. Operates a highly functional single active extrusion nozzle setup." },
-    { name: "A1 mini AMS 2 pro combo", form: "open", mat: "basic", size: "small", ams: "yes", laser: "no", nozzle_setup: "1", price: 259, desc: "The entry 4-colour printing setup feeding systematically into a single active hotend assembly." },
+    { name: "A1 mini AMS 2 Pro combo", form: "open", mat: "basic", size: "small", ams: "yes", laser: "no", nozzle_setup: "1", price: 259, desc: "The entry 4-colour printing setup feeding systematically into a single active hotend assembly." },
     { name: "A1", form: "open", mat: "basic", size: "standard", ams: "no", laser: "no", nozzle_setup: "1", price: 219, desc: "Full standard size open bed-slinger running on a durable 1-nozzle system configuration." },
-    { name: "A1 AMS 2 pro combo", form: "open", mat: "basic", size: "standard", ams: "yes", laser: "no", nozzle_setup: "1", price: 319, desc: "Highly popular multi-material household machine utilizing a single nozzle split-feed layout." },
+    { name: "A1 AMS 2 Pro combo", form: "open", mat: "basic", size: "standard", ams: "yes", laser: "no", nozzle_setup: "1", price: 319, desc: "Highly popular multi-material household machine utilizing a single nozzle split-feed layout." },
     { name: "P1P", form: "open-box", mat: "basic", size: "standard", ams: "no", laser: "no", nozzle_setup: "1", price: 538, desc: "High-speed core frame workhorse utilizing a rigid 1-nozzle core architecture layout." },
     { name: "P1S", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", nozzle_setup: "1", price: 339, desc: "Fully enclosed chassis setup running on a standard stable 1-nozzle high temperature block." },
-    { name: "P1S AMS 2 pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_setup: "1", price: 479, desc: "The iconic value multi-colour platform feeding 4 separate spools to a single nozzle." },
+    { name: "P1S AMS 2 Pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_setup: "1", price: 479, desc: "The iconic value multi-colour platform feeding 4 separate spools to a single nozzle." },
     { name: "P2S", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", nozzle_setup: "1", price: 479, desc: "Refined mid-tier box layout keeping an advanced, reliable single nozzle configuration toolhead." },
-    { name: "P2S AMS 2 pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_setup: "1", price: 699, desc: "Next-generation mid-range favorite with multi-filament capabilities feeding into 1 nozzle." },
+    { name: "P2S AMS 2 Pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_setup: "1", price: 699, desc: "Next-generation mid-range favorite with multi-filament capabilities feeding into 1 nozzle." },
     { name: "X1-Carbon", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", nozzle_setup: "1", price: 1179, desc: "Premium flagship workstation with AI monitoring and standard 1-nozzle toolhead layout." },
-    { name: "X1-Carbon AMS 2 pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_setup: "1", price: 1439, desc: "The professional workspace standard processing multi-filament feeds through a single nozzle." },
-    { name: "X1E AMS 2 pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_setup: "1", price: 1111, desc: "Enterprise machine adding an actively heated print house around its high-temp 1-nozzle system." },
+    { name: "X1-Carbon AMS 2 Pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_setup: "1", price: 1439, desc: "The professional workspace standard processing multi-filament feeds through a single nozzle." },
+    { name: "X1E AMS 2 Pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_setup: "1", price: 1111, desc: "Enterprise machine adding an actively heated print house around its high-temp 1-nozzle system." },
     { name: "X2D", form: "enclosed", mat: "advanced", size: "large", ams: "no", laser: "no", nozzle_setup: "2", price: 569, desc: "Next-gen flagship scaled gantry platform introducing a dual independent nozzle system." },
-    { name: "X2D AMS 2 pro combo", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_setup: "2", price: 769, desc: "Flagship large-format printer combining dual-nozzle options with automated material feeding boxes." },
+    { name: "X2D AMS 2 Pro combo", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_setup: "2", price: 769, desc: "Flagship large-format printer combining dual-nozzle options with automated material feeding boxes." },
     { name: "H2S Standard", form: "enclosed", mat: "advanced", size: "standard", ams: "no", laser: "no", nozzle_setup: "2", price: 999, desc: "High-speed enclosed printer setup engineering an advanced dual independent nozzle assembly toolhead." },
-    { name: "H2S AMS 2 pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_setup: "2", price: 1199, desc: "Enclosed performance printing carrying a dual-nozzle system and heated material switcher." },
-    { name: "H2S Laser Full AMS 2 pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "yes", nozzle_setup: "2", price: 1799, desc: "Complete multi-material package featuring dual structural print nozzles alongside a dedicated laser unit." },
+    { name: "H2S AMS 2 Pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "no", nozzle_setup: "2", price: 1199, desc: "Enclosed performance printing carrying a dual-nozzle system and heated material switcher." },
+    { name: "H2S Laser Full AMS 2 Pro combo", form: "enclosed", mat: "advanced", size: "standard", ams: "yes", laser: "yes", nozzle_setup: "2", price: 1799, desc: "Complete multi-material package featuring dual structural print nozzles alongside a dedicated laser unit." },
     { name: "H2D Standard", form: "enclosed", mat: "advanced", size: "large", ams: "no", laser: "no", nozzle_setup: "2", price: 1449, desc: "Spacious enclosed workspace built with a dual independent nozzle layout for engineering scaling." },
-    { name: "H2D AMS 2 pro combo", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_setup: "2", price: 1649, desc: "Combines heavy industrial volume capacity with dual independent print nozzles and heating automation." },
+    { name: "H2D AMS 2 Pro combo", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_setup: "2", price: 1649, desc: "Combines heavy industrial volume capacity with dual independent print nozzles and heating automation." },
     { name: "H2D Laser Combo", form: "enclosed", mat: "advanced", size: "large", ams: "no", laser: "yes", nozzle_setup: "2", price: 2149, desc: "Large-format platform matching a 2-nozzle plastic extrusion structure with precision laser units." },
-    { name: "H2D Pro AMS 2 pro combo", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_setup: "2", price: 1769, desc: "Upgraded luxury hardware specifications running a premier dual independent nozzle configuration." },
-    { name: "H2C Vortek AMS 2 pro combo", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_setup: "changing", price: 1999, desc: "Premium industrial mechanics featuring the automated dynamic robotic Vortek hotend changer layout." },
-    { name: "H2C Laser Full AMS 2 pro combo (10W)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "yes", nozzle_setup: "changing", price: 2499, desc: "Industrial build body loaded with automated changing nozzles, multi-colour feeding, and a 10W laser unit." },
-    { name: "H2C Laser Full AMS 2 pro combo (40W)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "yes", nozzle_setup: "changing", price: 2999, desc: "The ultimate industrial workshop master choice utilizing automated changing nozzle carousels and a 40W cutting laser." }
+    { name: "H2D Pro AMS 2 Pro combo", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_setup: "2", price: 1769, desc: "Upgraded luxury hardware specifications running a premier dual independent nozzle configuration." },
+    { name: "H2C Vortek AMS 2 Pro combo", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "no", nozzle_setup: "changing", price: 1999, desc: "Premium industrial mechanics featuring the automated dynamic robotic Vortek hotend changer layout." },
+    { name: "H2C Laser Full AMS 2 Pro combo (10W)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "yes", nozzle_setup: "changing", price: 2499, desc: "Industrial build body loaded with automated changing nozzles, multi-colour feeding, and a 10W laser unit." },
+    { name: "H2C Laser Full AMS 2 Pro combo (40W)", form: "enclosed", mat: "advanced", size: "large", ams: "yes", laser: "yes", nozzle_setup: "changing", price: 2999, desc: "The ultimate industrial workshop master choice utilizing automated changing nozzle carousels and a 40W cutting laser." }
 ];
 
 const questions = [
@@ -113,14 +112,6 @@ function changeCurrency(val) {
     if (document.getElementById('quiz-screen').classList.contains('active')) {
         renderQuestion();
     } else if (document.getElementById('results-screen').classList.contains('active')) {
-        calculateResult();
-    }
-}
-
-function toggleBudgetStrictness(checked) {
-    budgetIsStrict = !checked; 
-    updateSidebarAndStatus();
-    if (document.getElementById('results-screen').classList.contains('active')) {
         calculateResult();
     }
 }
@@ -238,7 +229,7 @@ function renderQuestion() {
                 document.getElementById('next-btn').disabled = false;
             }
             
-            // Premium Added Visual: Radio Circle Element
+            // Radio Circle Element
             const radioCircle = document.createElement('div');
             radioCircle.className = 'custom-radio-circle';
             card.appendChild(radioCircle);
@@ -335,13 +326,9 @@ function getRankedMatches() {
 
         let calculatedPercentage = totalWeights > 0 ? Math.round((score / totalWeights) * 100) : 100;
         
-        // Strict Budget Logic vs Stretch logic control
+        // Strict hard budget truncation logic
         if (model.price > budgetCap) {
-            if (budgetIsStrict) {
-                calculatedPercentage = 0; 
-            } else {
-                calculatedPercentage = Math.max(0, calculatedPercentage - 45); 
-            }
+            calculatedPercentage = 0; 
         }
         return { ...model, pct: calculatedPercentage };
     }).filter(model => model.pct > 0).sort((x, y) => y.pct - x.pct);
@@ -398,7 +385,7 @@ function calculateResult() {
         const card = document.createElement('div');
         card.className = `result-item-card ${isBest ? 'best-match' : ''}`;
 
-        // Advanced Feature: Multicard Comparison Checklist Selection
+        // Multicard Comparison Checklist Selection
         const selectorHolder = document.createElement('div');
         selectorHolder.className = 'card-select-checkbox-holder';
         
@@ -479,7 +466,7 @@ function updateCompareActionBar() {
     btn.disabled = markedModelCompareList.length < 2;
 }
 
-// Advanced Feature: Real-time Multi-Material Filament Waste & Flush Calculator Widget
+// Real-time Multi-Material Filament Waste & Flush Calculator Widget
 function renderFilamentFlushCalculatorWidget() {
     const calcContainer = document.getElementById('filament-calc-container');
     calcContainer.innerHTML = '';
@@ -491,7 +478,7 @@ function renderFilamentFlushCalculatorWidget() {
     widgetBox.className = 'flush-calc-card';
     widgetBox.innerHTML = `
         <h3 style="margin:0 0 6px 0; font-size:16px;"><i class="fa-solid fa-calculator" style="color:var(--selected-border);"></i> Intelligent AMS Flush Projection</h3>
-        <p style="margin:0; font-size:13px; opacity:0.8; line-height:1.4;">Based on your premium selection of an <strong>AMS 2 pro combo</strong> machine ecosystem framework, your typical transition waste factor indices calculate as:</p>
+        <p style="margin:0; font-size:13px; opacity:0.8; line-height:1.4;">Based on your premium selection of an <strong>AMS 2 Pro combo</strong> machine ecosystem framework, your typical transition waste factor indices calculate as:</p>
         <div class="calc-grid">
             <div class="calc-metric-box">
                 <div class="calc-metric-num">~250-400</div>
@@ -511,7 +498,7 @@ function openSingleSpecificationSheet(printer) {
     openMultiComparisonModal(true);
 }
 
-// Advanced Feature: Dynamic Multi-Column Processing Matrix with Relative Build Area Cubes
+// Dynamic Multi-Column Processing Matrix with Relative Build Area Cubes
 function openMultiComparisonModal(isSingleView = false) {
     if(markedModelCompareList.length === 0) return;
     
@@ -565,7 +552,7 @@ function openMultiComparisonModal(isSingleView = false) {
     nozzleRow += `</tr>`;
 
     let amsRow = `<tr><td>Multi-Filament Feeding</td>`;
-    markedModelCompareList.forEach(m => { amsRow += `<td>${m.ams === 'yes' ? 'AMS 2 pro combo' : 'None'}</td>`; });
+    markedModelCompareList.forEach(m => { amsRow += `<td>${m.ams === 'yes' ? 'AMS 2 Pro combo' : 'None'}</td>`; });
     amsRow += `</tr>`;
 
     table.innerHTML = headerRow + priceRow + chamberRow + enclosedRow + nozzleRow + amsRow;
