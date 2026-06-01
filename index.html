@@ -3,40 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bambu Lab Deployment Architecture Engine</title>
+    <title>Bambu Lab Printer Selector</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖨️</text></svg>">
     <style>
         :root {
+            /* Dark Mode (Default) */
             --bg-color: #0d1117;
             --container-bg: #161b22;
             --text-color: #c9d1d9;
+            --heading-color: #ffffff;
             --accent-color: #2ea44f;
             --accent-hover: #238636;
             --border-color: #30363d;
             --card-hover: #21262d;
             --selected-border: #58a6ff;
-            --diagnostic-bg: #0d1117;
-            --widget-bg: rgba(22, 27, 34, 0.95);
+            --widget-bg: rgba(22, 27, 34, 0.85);
             --tag-pass: rgba(46, 164, 79, 0.15);
             --tag-pass-text: #56d364;
             --tag-fail: rgba(240, 81, 81, 0.1);
             --tag-fail-text: #f7786b;
+            --shadow-color: rgba(0, 0, 0, 0.4);
         }
 
-        @media (prefers-color-scheme: light) {
-            :root {
-                --bg-color: #f6f8fa;
-                --container-bg: #ffffff;
-                --text-color: #24292f;
-                --accent-color: #1f883d;
-                --accent-hover: #1a7f37;
-                --border-color: #d0d7de;
-                --card-hover: #f3f4f6;
-                --selected-border: #0969da;
-                --diagnostic-bg: #f6f8fa;
-                --widget-bg: rgba(255, 255, 255, 0.95);
-            }
-            h1, h3, h4 { color: #24292f !important; }
+        body.light-theme {
+            /* Light Mode Overrides */
+            --bg-color: #f6f8fa;
+            --container-bg: #ffffff;
+            --text-color: #24292f;
+            --heading-color: #1f2328;
+            --accent-color: #1f883d;
+            --accent-hover: #1a7f37;
+            --border-color: #d0d7de;
+            --card-hover: #f3f4f6;
+            --selected-border: #0969da;
+            --widget-bg: rgba(255, 255, 255, 0.85);
+            --tag-pass: rgba(31, 136, 61, 0.1);
+            --tag-pass-text: #1a7f37;
+            --tag-fail: rgba(207, 34, 46, 0.1);
+            --tag-fail-text: #cf222e;
+            --shadow-color: rgba(140, 149, 159, 0.2);
         }
 
         body {
@@ -46,6 +51,7 @@
             margin: 0;
             padding: 20px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -53,35 +59,64 @@
             transition: background 0.3s, color 0.3s;
         }
 
+        /* Toolbar Utilities */
+        .top-toolbar {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
+        }
+
+        .theme-toggle-btn {
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: var(--card-hover);
+        }
+
         .quiz-container {
             background-color: var(--container-bg);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 12px;
             padding: 32px;
             width: 100%;
             max-width: 600px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px var(--shadow-color);
             box-sizing: border-box;
             position: relative;
-            z-index: 1;
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
 
-        /* Micro Floating Corner Leaderboard */
+        /* Floating Corner Leaderboard */
         .corner-leaderboard-widget {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 25px;
+            right: 25px;
             width: 260px;
             background-color: var(--widget-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-            backdrop-filter: blur(8px);
+            border-radius: 10px;
+            padding: 14px;
+            box-shadow: 0 6px 20px var(--shadow-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 100;
             box-sizing: border-box;
             display: none;
-            transition: all 0.2s ease;
         }
 
         .corner-leaderboard-widget.visible {
@@ -91,10 +126,11 @@
         .widget-header {
             font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #8b949e;
+            letter-spacing: 0.8px;
+            color: var(--text-color);
+            opacity: 0.8;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -105,9 +141,7 @@
         .leaderboard-rows {
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            max-height: 150px;
-            overflow-y: auto;
+            gap: 6px;
         }
 
         .leaderboard-row {
@@ -115,14 +149,15 @@
             justify-content: space-between;
             align-items: center;
             font-size: 12px;
-            padding: 4px 6px;
-            border-radius: 4px;
-            background: rgba(0,0,0,0.05);
+            padding: 6px 8px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid transparent;
         }
 
         .leaderboard-row.top-tier {
             background: rgba(46, 164, 79, 0.08);
-            border: 1px solid rgba(46, 164, 79, 0.3);
+            border: 1px solid rgba(46, 164, 79, 0.25);
             font-weight: 600;
         }
 
@@ -132,9 +167,9 @@
             font-weight: 700;
         }
 
-        h1, h3, h4 { color: #fff; font-weight: 600; margin-top: 0; }
-        h1 { font-size: 24px; text-align: center; margin-bottom: 8px; }
-        .subtitle { text-align: center; color: #8b949e; margin-bottom: 24px; font-size: 14px; }
+        h1, h3, h4 { color: var(--heading-color); font-weight: 600; margin-top: 0; }
+        h1 { font-size: 26px; text-align: center; margin-bottom: 8px; }
+        .subtitle { text-align: center; color: var(--text-color); opacity: 0.7; margin-bottom: 24px; font-size: 14px; }
 
         .screen { display: none; }
         .screen.active { display: block; }
@@ -142,45 +177,46 @@
         .btn {
             background-color: var(--accent-color);
             color: white;
-            border: 1px solid rgba(240,246,252,0.1);
+            border: 1px solid rgba(255,255,255,0.05);
             border-radius: 6px;
             padding: 12px 24px;
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
             width: 100%;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.1s;
         }
         .btn:hover { background-color: var(--accent-hover); }
-        .btn:disabled { background-color: var(--card-hover); color: #8b949e; cursor: not-allowed; border-color: var(--border-color); }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { background-color: var(--card-hover); color: var(--text-color); opacity: 0.5; cursor: not-allowed; border-color: var(--border-color); }
 
         .options-list { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
 
         .option-card {
             background-color: var(--container-bg);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 16px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: border-color 0.2s, background-color 0.2s;
         }
         .option-card:hover { background-color: var(--card-hover); }
         .option-card.selected { border-color: var(--selected-border); background-color: rgba(88, 166, 255, 0.05); }
 
-        .hint { display: block; font-size: 12px; color: #8b949e; margin-top: 4px; }
+        .hint { display: block; font-size: 12px; color: var(--text-color); opacity: 0.65; margin-top: 4px; line-height: 1.4; }
 
-        .progress-bar-container { background-color: var(--border-color); height: 4px; border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
+        .progress-bar-container { background-color: var(--border-color); height: 5px; border-radius: 3px; margin-bottom: 24px; overflow: hidden; }
         .progress-bar { background-color: var(--accent-color); height: 100%; width: 0%; transition: width 0.3s ease; }
 
-        .nav-buttons { display: flex; gap: 12px; margin-top: 20px; }
+        .nav-buttons { display: flex; gap: 12px; margin-top: 24px; }
         .btn-secondary { background-color: var(--card-hover); color: var(--text-color); border: 1px solid var(--border-color); }
         .btn-secondary:hover { opacity: 0.9; }
 
         .resume-banner {
-            background: rgba(88, 166, 255, 0.1);
+            background: rgba(88, 166, 255, 0.08);
             border: 1px solid var(--selected-border);
             padding: 12px;
-            border-radius: 6px;
+            border-radius: 8px;
             margin-bottom: 20px;
             font-size: 13px;
             display: flex;
@@ -188,22 +224,20 @@
             align-items: center;
         }
 
-        .diagnostic-box {
-            background-color: var(--diagnostic-bg);
-            border: 1px solid var(--border-color);
-            padding: 10px 14px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 11px;
-            color: #8b949e;
-            margin-top: 24px;
-        }
+        .status-box { font-size: 13px; color: var(--text-color); opacity: 0.7; margin-top: 20px; text-align: center; }
 
-        .result-box { border: 1px solid var(--accent-color); background-color: rgba(46, 164, 79, 0.05); padding: 20px; border-radius: 6px; text-align: center; margin-top: 20px; }
-        .result-title { font-size: 22px; font-weight: 700; }
+        /* Results Display Stack */
+        .results-list { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
+        .result-item-card { border: 1px solid var(--border-color); background-color: rgba(255, 255, 255, 0.01); padding: 20px; border-radius: 10px; transition: background-color 0.3s, border-color 0.3s; }
+        .result-item-card.best-match { border-color: var(--accent-color); background-color: rgba(46, 164, 79, 0.04); box-shadow: 0 4px 12px rgba(46, 164, 79, 0.05); }
+        
+        .result-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-primary { background-color: var(--accent-color); color: #fff; }
+        .badge-secondary { background-color: var(--border-color); color: var(--text-color); }
 
-        .matrix-container { margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .matrix-item { padding: 6px 10px; border-radius: 4px; font-size: 12px; display: flex; justify-content: space-between; font-weight: 500; }
+        .result-item-title { font-size: 20px; font-weight: 700; color: var(--heading-color); margin-bottom: 6px; }
+        .matrix-container { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .matrix-item { padding: 6px 10px; border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
         .mat-pass { background-color: var(--tag-pass); color: var(--tag-pass-text); }
         .mat-fail { background-color: var(--tag-fail); color: var(--tag-fail-text); }
 
@@ -218,24 +252,30 @@
 </head>
 <body>
 
+<div class="top-toolbar">
+    <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">
+        <span>☀️ Light Mode</span>
+    </button>
+</div>
+
 <div class="quiz-container">
     <div id="intro-screen" class="screen active">
-        <h1>Bambu Lab Platform Engine</h1>
-        <div class="subtitle">Ecosystem Deployment Evaluation</div>
+        <h1>Find Your Bambu Lab Printer</h1>
+        <div class="subtitle">Answer a few quick questions to find your perfect 3D printing match</div>
         
         <div id="resume-container"></div>
 
-        <p style="line-height: 1.6; font-size: 14px; color: #8b949e; text-align: center; margin-bottom: 30px;">
-            Run system parameter analytics to isolate your specific printer bundle footprint across standard, multi-material, and laser modular variants.
+        <p style="line-height: 1.6; font-size: 14px; color: var(--text-color); opacity: 0.8; text-align: center; margin-bottom: 30px;">
+            Whether you want a simple plug-and-play desktop setup for fun projects or an enclosed engineering workspace for heavy prototyping, this quiz will rank the best options for you.
         </p>
-        <button class="btn" onclick="startQuiz(false)">Initialize Engine</button>
+        <button class="btn" onclick="startQuiz(false)">Start the Quiz</button>
     </div>
 
     <div id="quiz-screen" class="screen">
         <div class="progress-bar-container">
             <div id="progress" class="progress-bar"></div>
         </div>
-        <h3 id="question-text">Context assignment running...</h3>
+        <h3 id="question-text">Loading configuration fields...</h3>
         <div id="options-container" class="options-list"></div>
         
         <div class="nav-buttons">
@@ -243,25 +283,20 @@
             <button id="next-btn" class="btn" onclick="goNext()" disabled>Next Step</button>
         </div>
 
-        <div class="diagnostic-box">
-            <span>ENGINE STATUS: </span><span id="diagnostic-text" style="color: var(--accent-color);">Analyzing build profiles...</span>
+        <div id="status-box" class="status-box">
+            Analyzing preferences...
         </div>
     </div>
 
     <div id="results-screen" class="screen">
-        <h1>System Profile Match</h1>
-        <div class="subtitle">Optimized deployment strategy configuration:</div>
-        <div class="result-box">
-            <div id="match-name" class="result-title">Rendering matrix...</div>
-        </div>
-        <div id="match-details" style="margin-top: 20px; font-size: 14px; color: #8b949e; line-height: 1.5;"></div>
+        <h1>Your Top Printer Matches</h1>
+        <div class="subtitle">Based on your answers, here are your best choices ranked:</div>
         
-        <h4 style="margin-top: 20px; margin-bottom: 8px;">Material Profile Readiness:</h4>
-        <div id="filament-matrix" class="matrix-container"></div>
+        <div id="results-list-container" class="results-list"></div>
         
-        <div style="margin-top: 24px; display: flex; gap: 10px;">
-            <button class="btn" style="font-size: 13px;" onclick="copyMarkdownReport()">Copy Markdown Report</button>
-            <button class="btn btn-secondary" style="font-size: 13px;" onclick="resetQuiz()">Restart</button>
+        <div style="margin-top: 24px; display: flex; gap: 12px;">
+            <button class="btn" style="font-size: 14px;" onclick="copyMarkdownReport()">Copy Match Results</button>
+            <button class="btn btn-secondary" style="font-size: 14px;" onclick="resetQuiz()">Restart Quiz</button>
         </div>
     </div>
 </div>
@@ -269,7 +304,7 @@
 <div id="sidebar" class="corner-leaderboard-widget">
     <div class="widget-header">
         <span>Live Match Index</span>
-        <span style="color: var(--accent-color); font-weight:bold;">● Live</span>
+        <span style="color: var(--accent-color); font-weight:bold;">● Dynamic</span>
     </div>
     <div id="leaderboard" class="leaderboard-rows"></div>
 </div>
@@ -279,99 +314,111 @@
     let userSelections = {};
     let historyStack = [];
     let temporarySelection = null;
-    let finalMatchString = "";
+    let finalRankedMatches = [];
 
     const printerModels = [
-        { name: "H2S Standard", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "no", laser: "none" },
-        { name: "H2S Combo (With AMS)", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "yes", laser: "none" },
-        { name: "H2S Laser Full Combo", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "yes", laser: "10w" },
-        { name: "H2D Standard", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "no", laser: "none" },
-        { name: "H2D Combo (With AMS)", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "yes", laser: "none" },
-        { name: "H2D Laser Combo", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "yes", laser: "10w" },
-        { name: "H2D Pro", form: "H", mat: "advanced", budget: "flagship", size: "large", ams: "no", laser: "none" },
-        { name: "H2C Vortek Combo (With AMS)", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "none" },
-        { name: "H2C Laser Full Combo (10W)", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "10w" },
-        { name: "H2C Laser Full Combo (40W)", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "40w" },
-        { name: "X1-Carbon", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "no", laser: "none" },
-        { name: "X1-Carbon Combo (With AMS)", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "yes", laser: "none" },
-        { name: "X1E", form: "P_X", mat: "extreme", budget: "flagship", size: "standard", ams: "no", laser: "none" },
-        { name: "X2D", form: "P_X", mat: "advanced", budget: "flagship", size: "standard", ams: "no", laser: "none" },
-        { name: "X2D Combo (With AMS)", form: "P_X", mat: "advanced", budget: "flagship", size: "standard", ams: "yes", laser: "none" },
-        { name: "P1P", form: "P_X", mat: "basic", budget: "budget", size: "standard", ams: "no", laser: "none" },
-        { name: "P1S", form: "P_X", mat: "advanced", budget: "budget", size: "standard", ams: "no", laser: "none" },
-        { name: "P1S Combo (With AMS)", form: "P_X", mat: "advanced", budget: "budget", size: "standard", ams: "yes", laser: "none" },
-        { name: "P2S", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "no", laser: "none" },
-        { name: "P2S Combo (With AMS)", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "yes", laser: "none" },
-        { name: "A1 mini", form: "A", mat: "basic", budget: "budget", size: "small", ams: "no", laser: "none" },
-        { name: "A1 mini Combo (With AMS lite)", form: "A", mat: "basic", budget: "budget", size: "small", ams: "yes", laser: "none" },
-        { name: "A1", form: "A", mat: "basic", budget: "budget", size: "standard", ams: "no", laser: "none" },
-        { name: "A1 Combo (With AMS lite)", form: "A", mat: "basic", budget: "budget", size: "standard", ams: "yes", laser: "none" }
+        { name: "A1 mini", form: "A", mat: "basic", budget: "budget", size: "small", ams: "no", laser: "none", desc: "Incredibly compact, affordable, and accurate. Best for high-quality small prints on a tight desk footprint." },
+        { name: "A1 mini Combo (With AMS lite)", form: "A", mat: "basic", budget: "budget", size: "small", ams: "yes", laser: "none", desc: "The easiest and most affordable way to get started with multi-color 3D printing in a space-conscious setup." },
+        { name: "A1", form: "A", mat: "basic", budget: "budget", size: "standard", ams: "no", laser: "none", desc: "The benchmark open-frame desktop printer. Clean operation, toolless maintenance, and fantastic value." },
+        { name: "A1 Combo (With AMS lite)", form: "A", mat: "basic", budget: "budget", size: "standard", ams: "yes", laser: "none", desc: "An outstanding user-friendly choice for reliable multi-color printing on a wide desktop workspace." },
+        { name: "P1P", form: "P_X", mat: "basic", budget: "budget", size: "standard", ams: "no", laser: "none", desc: "An entry enclosed CoreXY frame layout. High speed kinematic printing scaled down to baseline features." },
+        { name: "P1S", form: "P_X", mat: "advanced", budget: "budget", size: "standard", ams: "no", laser: "none", desc: "Affordable enclosed desktop setup. Keeps temperatures stable for printing tougher plastics without warping." },
+        { name: "P1S Combo (With AMS)", form: "P_X", mat: "advanced", budget: "budget", size: "standard", ams: "yes", laser: "none", desc: "The sweet spot choice for everyday users needing a multi-color system inside a protective enclosure." },
+        { name: "P2S", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "no", laser: "none", desc: "An upgraded enclosed machine built to handle a continuous work cycle with rugged internals." },
+        { name: "P2S Combo (With AMS)", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "yes", laser: "none", desc: "A robust production setup bundled alongside seamless multi-material spool switching." },
+        { name: "X1-Carbon", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "no", laser: "none", desc: "The reliable desktop benchmark for advanced engineering materials, helped by carbon-fiber tuning." },
+        { name: "X1-Carbon Combo (With AMS)", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "yes", laser: "none", desc: "The definitive choice for multi-color engineering applications using premium hardware automation." },
+        { name: "X2D", form: "P_X", mat: "advanced", budget: "flagship", size: "standard", ams: "no", laser: "none", desc: "A top-tier enclosed desktop setup featuring next-generation sensor controls." },
+        { name: "X2D Combo (With AMS)", form: "P_X", mat: "advanced", budget: "flagship", size: "standard", ams: "yes", laser: "none", desc: "Premium enclosed multi-material platform offering ultimate sensor logic and quality checks." },
+        { name: "X1E Enterprise", form: "P_X", mat: "extreme", budget: "flagship", size: "standard", ams: "no", laser: "none", desc: "Equipped with advanced data encryption network options and an actively heated build chamber." },
+        { name: "H2S Standard", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "no", laser: "none", desc: "An entry-level approach to getting clean engineering prints across a massive workspace scale." },
+        { name: "H2S Combo (With AMS)", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "yes", laser: "none", desc: "Large-scale build volume paired with multi-material capability to cut down assembly work." },
+        { name: "H2S Laser Full Combo", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "yes", laser: "10w", desc: "Combines giant multi-color print sizes with an adaptable low-power surface marking laser." },
+        { name: "H2D Standard", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "no", laser: "none", desc: "A heavy-duty professional build platform tailored for continuous fabrication environments." },
+        { name: "H2D Combo (With AMS)", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "yes", laser: "none", desc: "The workshop choice for wide multi-color or water-soluble support engineering layouts." },
+        { name: "H2D Laser Combo", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "yes", laser: "10w", desc: "Continuous large format extrusion accompanied by a surface engraving laser kit." },
+        { name: "H2D Pro", form: "H", mat: "advanced", budget: "flagship", size: "large", ams: "no", laser: "none", desc: "An air-gapped secure model made for closed network setups needing heavy part sizing." },
+        { name: "H2C Vortek Combo", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "none", desc: "A premium production platform boasting high chamber heat control and automated nozzle swaps." },
+        { name: "H2C Laser Full Combo (10W)", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "10w", desc: "Flagship system tracking advanced polymers, multi-feed spools, and line engraving." },
+        { name: "H2C Laser Full Combo (40W)", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "40w", desc: "The ultimate bundle option providing maximum high-temp building alongside a thick-cutting laser module." }
     ];
 
     const questions = [
         {
             key: "form_factor",
-            text: "What mechanical architecture matches your workspace layout?",
+            text: "What body style fits your space and needs?",
             options: [
-                { text: "Entry-Level Bed-Slinger", hint: "Compact footprint. Highly open physical configuration matrix.", value: "A" },
-                { text: "Enclosed CoreXY Box Structure", hint: "High speed kinematics completely encapsulated for thermal containment.", value: "P_X" },
-                { text: "Heavy Enterprise Platform", hint: "Maximum high-temperature configurations and massive structural footprints.", value: "H" }
+                { text: "Open Frame (Bed-Slinger Layout)", hint: "The print bed moves back and forth. Budget-friendly, fun to look at, and very easy to adjust.", value: "A" },
+                { text: "Enclosed Desktop Box (CoreXY Style)", hint: "The printer is completely boxed in. This keeps airflow quiet and controls heat perfectly for high speeds.", value: "P_X" },
+                { text: "Large Format Professional Platform", hint: "A heavy, industrial size for when you need to make massive parts in one seamless piece.", value: "H" }
             ]
         },
         {
             key: "materials",
-            text: "What structural filament requirements do you have?",
+            text: "What filaments do you plan on printing with?",
             options: [
-                { text: "Standard Filaments", hint: "Primarily open-air printing using simple PLA, PETG, or flexible TPU.", value: "basic" },
-                { text: "Engineering Polymers", hint: "Requires constant high-temp retention for warping control (ABS, ASA, Carbon Fiber combinations).", value: "advanced" },
-                { text: "Ultra-Spec Systems", hint: "Requires active temperature chamber environments or continuous hardware tool-changing methods.", value: "extreme" }
+                { text: "Standard Everyday Materials", hint: "Mainly casual projects utilizing basic PLA, PETG, or soft flexible TPU filaments.", value: "basic" },
+                { text: "Engineering-Grade Plastics", hint: "Tough materials that require warm ambient air to stop warping (like ABS, ASA, or Carbon Fiber blends).", value: "advanced" },
+                { text: "Specialty Materials", hint: "Advanced materials requiring highly secure network options or actively heated frame chambers.", value: "extreme" }
             ]
         },
         {
             key: "budget_tier",
-            text: "What operation deployment tier does this budget fit?",
+            text: "What tier of printer are you shopping for?",
             options: [
-                { text: "Hobbyist Baseline Space", hint: "High performance value tracking for personal labs.", value: "budget" },
-                { text: "Production Workhorse", hint: "Continuous operations speed, robust mechanics, standard scaling.", value: "performance" },
-                { text: "Enterprise Flagship", hint: "Full data governance compliance, premium sensors, multi-axis system expansion.", value: "flagship" }
+                { text: "Great Value Hobbyist", hint: "Excellent consumer features balanced with highly accessible prices for home use.", value: "budget" },
+                { text: "Everyday Workshop Workhorse", hint: "Built for regular operation, heavier hardware wear, and premium print speeds.", value: "performance" },
+                { text: "Enterprise & Professional Flagship", hint: "Top-end sensory checking tools, camera monitoring arrays, and strict data security compliance.", value: "flagship" }
             ]
         },
         {
             key: "size_need",
-            text: "What are your minimum workspace dimension restrictions?",
+            text: "What build size capacity works best for your models?",
             options: [
-                { text: "Small Frame Core (Up to 180mm³)", hint: "Great for miniature structural work and space savings.", value: "small" },
-                { text: "Standard Frame Core (Around 256mm³)", hint: "The regular desktop capacity threshold.", value: "standard" },
-                { text: "Large Scale Workspace (Up to 330mm³)", hint: "Industrial volume for unsegmented component manufacturing.", value: "large" }
+                { text: "Small items (Up to 180mm³ space)", hint: "Saves space, perfect for miniatures, small brackets, and tabletop items.", value: "small" },
+                { text: "Standard desktop room (Around 256mm³ space)", hint: "The default mainstream size. Fits almost all household print designs comfortably.", value: "standard" },
+                { text: "Massive scale capacity (Up to 330mm³ space)", hint: "When you want to print huge structural components without splitting files.", value: "large" }
             ]
         },
         {
             key: "ams_needed",
-            text: "Do you require automated material management components (AMS)?",
+            text: "Are you interested in multi-color or multi-material printing?",
             options: [
-                { text: "Yes, incorporate an AMS unit package", hint: "Enables multi-color processing and continuous support structures.", value: "yes" },
-                { text: "No, standalone layout operations", hint: "Single reel feed setups fit the workspace goals just fine.", value: "no" }
+                { text: "Yes, bundle it with an AMS unit setup", hint: "Holds up to 4 spools at once. Allows beautiful multi-color items and automatic backup swapping.", value: "yes" },
+                { text: "No, classic single-spool printing is fine", hint: "Prints one filament at a time. Straightforward, lower upfront cost, and reliable.", value: "no" }
             ]
         },
         {
             key: "laser_needed",
-            text: "Do you need inline cutting/engraving modules integrated?",
+            text: "Do you need a laser attachment option for cutting and engraving?",
             options: [
-                { text: "No laser arrays required", hint: "Pure additive printing environment.", value: "none" },
-                { text: "Yes, 10W standard processing bundle", hint: "Suited for basic profile engraving jobs.", value: "10w" },
-                { text: "Yes, 40W heavy production toolhead", hint: "Thicker structural component adjustments directly inside the bay.", value: "40w" }
+                { text: "No laser utility required", hint: "I want to focus 100% on standard 3D printing features.", value: "none" },
+                { text: "Yes, standard laser module support", hint: "Useful for marking on custom printed enclosures or wooden accents.", value: "10w" },
+                { text: "Yes, high-power toolhead module", hint: "Industrial layout for thicker material operations inside the frame space.", value: "40w" }
             ]
         }
     ];
 
+    function toggleTheme() {
+        const body = document.body;
+        const themeBtn = document.getElementById('theme-btn');
+        if (body.classList.contains('light-theme')) {
+            body.classList.remove('light-theme');
+            themeBtn.innerHTML = '<span>☀️ Light Mode</span>';
+        } else {
+            body.classList.add('light-theme');
+            themeBtn.innerHTML = '<span>🌙 Dark Mode</span>';
+        }
+    }
+
     window.onload = function() {
-        const saved = localStorage.getItem('bambu_quiz_selections');
-        const savedIndex = localStorage.getItem('bambu_quiz_index');
+        const saved = localStorage.getItem('bambu_user_selections');
+        const savedIndex = localStorage.getItem('bambu_user_index');
         if (saved && savedIndex && parseInt(savedIndex) > 0) {
             document.getElementById('resume-container').innerHTML = `
                 <div class="resume-banner">
-                    <span>You have a saved session available.</span>
-                    <button class="btn" style="width:auto; padding: 6px 12px; font-size:12px;" onclick="resumeQuiz()">Resume</button>
+                    <span>You have an unfinished selector session saved.</span>
+                    <button class="btn" style="width:auto; padding: 6px 12px; font-size:12px;" onclick="resumeQuiz()">Resume Quiz</button>
                 </div>`;
         }
     };
@@ -387,9 +434,9 @@
             historyStack = [];
             localStorage.clear();
         } else {
-            userSelections = JSON.parse(localStorage.getItem('bambu_quiz_selections') || '{}');
-            currentQuestionIndex = parseInt(localStorage.getItem('bambu_quiz_index') || '0');
-            historyStack = JSON.parse(localStorage.getItem('bambu_quiz_history') || '[]');
+            userSelections = JSON.parse(localStorage.getItem('bambu_user_selections') || '{}');
+            currentQuestionIndex = parseInt(localStorage.getItem('bambu_user_index') || '0');
+            historyStack = JSON.parse(localStorage.getItem('bambu_user_history') || '[]');
         }
         renderQuestion();
     }
@@ -404,6 +451,7 @@
 
         const q = questions[currentQuestionIndex];
         
+        // Context skip: Laser questions do not apply to small/desktop architectures
         if (q.key === "laser_needed" && userSelections["form_factor"] !== "H") {
             userSelections["laser_needed"] = "none";
             currentQuestionIndex++;
@@ -419,7 +467,7 @@
         const progressPercent = (currentQuestionIndex / questions.length) * 100;
         document.getElementById('progress').style.width = `${progressPercent}%`;
 
-        updateDiagnosticsAndLeaderboard();
+        updateSidebarAndStatus();
 
         const optionsContainer = document.getElementById('options-container');
         optionsContainer.innerHTML = '';
@@ -435,7 +483,7 @@
             
             const txt = document.createElement('div');
             txt.innerText = opt.text;
-            txt.style.fontWeight = "500";
+            txt.style.fontWeight = "600";
             card.appendChild(txt);
             
             const hnt = document.createElement('span');
@@ -460,9 +508,9 @@
         historyStack.push(currentQuestionIndex);
         currentQuestionIndex++;
         
-        localStorage.setItem('bambu_quiz_selections', JSON.stringify(userSelections));
-        localStorage.setItem('bambu_quiz_index', currentQuestionIndex);
-        localStorage.setItem('bambu_quiz_history', JSON.stringify(historyStack));
+        localStorage.setItem('bambu_user_selections', JSON.stringify(userSelections));
+        localStorage.setItem('bambu_user_index', currentQuestionIndex);
+        localStorage.setItem('bambu_user_history', JSON.stringify(historyStack));
         
         renderQuestion();
     }
@@ -473,41 +521,49 @@
         renderQuestion();
     }
 
-    function updateDiagnosticsAndLeaderboard() {
-        const diag = document.getElementById('diagnostic-text');
+    function getRankedMatches() {
         const f = userSelections.form_factor;
-        if (f === "A") diag.innerText = "Filtering entry-tier bed-slinging branches...";
-        else if (f === "H") diag.innerText = "Isolating industrial heavy platform tools...";
-        else if (f === "P_X") diag.innerText = "Analyzing consumer enclosed CoreXY lines...";
-        else diag.innerText = "Awaiting structural assignment logs...";
+        const m = userSelections.materials;
+        const b = userSelections.budget_tier;
+        const s = userSelections.size_need;
+        const ams = userSelections.ams_needed;
+        const laser = userSelections.laser_needed;
 
-        // Real-time matching algorithm engine logic
-        const scoredModels = printerModels.map(model => {
-            let matches = 0;
-            let totalAnswered = 0;
-            const criteria = { form: f, mat: userSelections.materials, budget: userSelections.budget_tier, size: userSelections.size_need, ams: userSelections.ams_needed, laser: userSelections.laser_needed };
+        return printerModels.map(model => {
+            let score = 0;
+            let answeredCount = 0;
+            const preferences = { form: f, mat: m, budget: b, size: s, ams: ams, laser: laser };
             
-            Object.keys(criteria).forEach(key => {
-                if (criteria[key] !== undefined) {
-                    totalAnswered++;
-                    if (model[key] === criteria[key]) matches++;
+            Object.keys(preferences).forEach(key => {
+                if (preferences[key] !== undefined) {
+                    answeredCount++;
+                    if (model[key] === preferences[key]) score++;
                 }
             });
 
-            const percentage = totalAnswered > 0 ? Math.round((matches / totalAnswered) * 100) : 100;
-            return { name: model.name, pct: percentage };
-        });
+            const matchPercentage = answeredCount > 0 ? Math.round((score / answeredCount) * 100) : 100;
+            return { ...model, pct: matchPercentage };
+        }).sort((a, b) => b.pct - a.pct);
+    }
 
-        scoredModels.sort((a, b) => b.pct - a.pct);
+    function updateSidebarAndStatus() {
+        const statusBox = document.getElementById('status-box');
+        const f = userSelections.form_factor;
+        
+        if (f === "A") statusBox.innerText = "Tailoring solutions for user-friendly, open bed-slinger footprints...";
+        else if (f === "H") statusBox.innerText = "Prioritizing high-volume structural production lines...";
+        else if (f === "P_X") statusBox.innerText = "Isolating enclosed desktop high-speed options...";
+        else statusBox.innerText = "Awaiting selections to dynamically calculate your matches...";
 
+        const ranked = getRankedMatches();
         const leaderboard = document.getElementById('leaderboard');
         leaderboard.innerHTML = '';
         
-        // Show top 4 possibilities in small corner dashboard widget
-        scoredModels.slice(0, 4).forEach((item, index) => {
+        // Show top 3 in the live floating corner widget
+        ranked.slice(0, 3).forEach((item, index) => {
             const row = document.createElement('div');
             row.className = `leaderboard-row ${index === 0 ? 'top-tier' : ''}`;
-            row.innerHTML = `<span>${index === 0 ? '🏆 ' : ''}${item.name}</span><span class="row-pct">${item.pct}%</span>`;
+            row.innerHTML = `<span>${index === 0 ? '👑 ' : ''}${item.name}</span><span class="row-pct">${item.pct}%</span>`;
             leaderboard.appendChild(row);
         });
     }
@@ -518,109 +574,68 @@
         document.getElementById('sidebar').classList.remove('visible');
         localStorage.clear();
 
-        let match = "P1S Combo (With AMS)"; 
-        let details = "";
-        let highTempFilaments = false;
+        finalRankedMatches = getRankedMatches();
+        const container = document.getElementById('results-list-container');
+        container.innerHTML = '';
 
-        const f = userSelections.form_factor;
-        const m = userSelections.materials;
-        const b = userSelections.budget_tier;
-        const s = userSelections.size_need;
-        const ams = userSelections.ams_needed;
-        const laser = userSelections.laser_needed;
+        // Display a list of the top 3 recommended options ranked in order
+        finalRankedMatches.slice(0, 3).forEach((printer, index) => {
+            const isBest = index === 0;
+            const card = document.createElement('div');
+            card.className = `result-item-card ${isBest ? 'best-match' : ''}`;
 
-        if (f === "A" || s === "small" || (b === "budget" && f !== "H")) {
-            if (s === "small") {
-                match = (ams === "yes") ? "A1 mini Combo (With AMS lite)" : "A1 mini";
-                details = "Compact architecture footprint. Outstanding reliability output standard for baseline filaments.";
-            } else {
-                match = (ams === "yes") ? "A1 Combo (With AMS lite)" : "A1";
-                details = "Full scale baseline open design framework highlighting painless toolless maintenance access patterns.";
-            }
-        } 
-        else if (f === "H" || s === "large" || m === "extreme") {
-            highTempFilaments = true;
-            if (m === "extreme" || b === "flagship") {
-                if (laser === "10w") match = "H2C Laser Full Combo (10W)";
-                else if (laser === "40w") match = "H2C Laser Full Combo (40W)";
-                else match = "H2C Vortek Combo (With AMS)";
-                details = "Flagship multi-material hardware layout providing zero-waste induction structural toolhead automation panels.";
-            } else if (b === "performance") {
-                if (laser === "10w" || laser === "40w") match = "H2D Laser Combo";
-                else if (ams === "yes") match = "H2D Combo (With AMS)";
-                else match = "H2D Standard";
-                details = "Heavy duty commercial workhorse built around extensive multi-material workspace volume retention rules.";
-            } else {
-                if (laser === "10w" || laser === "40w") match = "H2S Laser Full Combo";
-                else if (ams === "yes") match = "H2S Combo (With AMS)";
-                else match = "H2S Standard";
-                details = "High workspace envelope scaling mechanical baseline engineered to run ongoing engineering parameters safely.";
-            }
-            if (b === "flagship" && ams === "no" && laser === "none" && m === "advanced") {
-                match = "H2D Pro";
-                details = "Isolated data-secure commercial network setup built exclusively for air-gapped high-temp lab spaces.";
-            }
-        } 
-        else {
-            if (b === "flagship" || m === "advanced") {
-                highTempFilaments = true;
-                if (b === "flagship" && m === "advanced" && ams === "no") {
-                    match = "X1E";
-                    details = "Enterprise heavy performance CoreXY terminal deploying robust internal environmental heat chambers safely.";
-                } else {
-                    if (ams === "yes") {
-                        match = (b === "flagship") ? "X2D Combo (With AMS)" : "X1-Carbon Combo (With AMS)";
-                    } else {
-                        match = (b === "flagship") ? "X2D" : "X1-Carbon";
-                    }
-                    details = "Premium smart consumer benchmark tool system utilizing micro-radar sensor calibration grids.";
-                }
-            } else {
-                if (b === "budget") {
-                    match = "P1P";
-                    details = "Lean open core structural layout targeting raw computational kinematics travel output metrics.";
-                } else {
-                    highTempFilaments = true;
-                    if (ams === "yes") {
-                        match = (b === "performance") ? "P2S Combo (With AMS)" : "P1S Combo (With AMS)";
-                    } else {
-                        match = (b === "performance") ? "P2S" : "P1S";
-                    }
-                    details = "The premier enclosed consumer desktop baseline workhorse standard for structural workflows.";
-                }
-            }
-        }
+            const badge = document.createElement('div');
+            badge.className = `result-badge ${isBest ? 'badge-primary' : 'badge-secondary'}`;
+            badge.innerText = isBest ? `🏆 Top Recommended Match - ${printer.pct}%` : `Option Choice #${index + 1} - ${printer.pct}%`;
+            card.appendChild(badge);
 
-        finalMatchString = match;
-        document.getElementById('match-name').innerText = match;
-        document.getElementById('match-details').innerText = details;
+            const title = document.createElement('div');
+            title.className = 'result-item-title';
+            title.innerText = printer.name;
+            card.appendChild(title);
 
-        const matrix = document.getElementById('filament-matrix');
-        const list = [
-            { name: "PLA / PETG", native: true },
-            { name: "TPU (Flexible)", native: f !== "H" }, 
-            { name: "ABS / ASA", native: highTempFilaments },
-            { name: "Carbon Fiber Nylon", native: highTempFilaments && f !== "A" }
-        ];
-        
-        matrix.innerHTML = '';
-        list.forEach(item => {
-            const div = document.createElement('div');
-            div.className = `matrix-item ${item.native ? 'mat-pass' : 'mat-fail'}`;
-            div.innerHTML = `<span>${item.name}</span> <span>${item.native ? '✓ Native' : '✕ Structural Limit'}</span>`;
-            matrix.appendChild(div);
+            const description = document.createElement('div');
+            description.style.fontSize = '14px';
+            description.style.color = 'var(--text-color)';
+            description.style.opacity = '0.85';
+            description.style.lineHeight = '1.5';
+            description.style.marginBottom = '12px';
+            description.innerText = printer.desc;
+            card.appendChild(description);
+
+            const matrix = document.createElement('div');
+            matrix.className = 'matrix-container';
+            
+            const capabilities = [
+                { name: "Everyday prints (PLA/PETG)", ok: true },
+                { name: "Enclosed temperature control", ok: printer.form !== "A" },
+                { name: "Multi-color capabilities", ok: true },
+                { name: "High-temperature polymers", ok: printer.mat === "advanced" || printer.mat === "extreme" }
+            ];
+
+            capabilities.forEach(cap => {
+                const item = document.createElement('div');
+                item.className = `matrix-item ${cap.ok ? 'mat-pass' : 'mat-fail'}`;
+                item.innerHTML = `<span>${cap.name}</span> <span>${cap.ok ? '✓ Supported' : '✕ Unsupported'}</span>`;
+                matrix.appendChild(item);
+            });
+
+            card.appendChild(matrix);
+            container.appendChild(card);
         });
     }
 
     function copyMarkdownReport() {
-        const mdText = `### 🖨️ Bambu Lab Deployment Strategy Configuration Report
-- **Recommended Model Bundle:** ${finalMatchString}
-- **Architecture Base Spec:** ${userSelections.form_factor === "H" ? "Enterprise Frame" : userSelections.form_factor === "P_X" ? "Enclosed CoreXY" : "Bedslinger Open Axis"}
-- **Material Management Automated (AMS):** ${userSelections.ams_needed.toUpperCase()}
+        if (!finalRankedMatches.length) return;
+        
+        let report = `### 🖨️ My Ranked Bambu Lab Printer Matches\n`;
+        finalRankedMatches.slice(0, 3).forEach((p, idx) => {
+            report += `${idx + 1}. **${p.name}** (${p.pct}% Compatibility Match)\n   - ${p.desc}\n`;
+        });
+        report += `\n*Generated with the Bambu Lab User Selection Engine Guide.*`;
 
-*Generated securely via the open-source GitHub Deployment Engine Quiz.*`;
-        navigator.clipboard.writeText(mdText);
-        alert("Markdown Report copied to clipboard!");
+        navigator.clipboard.writeText(report);
+        alert("Your ranked match list has been saved to your clipboard!");
     }
 
     function resetQuiz() {
