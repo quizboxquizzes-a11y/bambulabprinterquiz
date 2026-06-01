@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* Theme Variables Configuration */
+        /* Dark Theme Variables (Default Setup) */
         :root {
             --bg-color: #0d1117;
             --container-bg: #161b22;
@@ -30,6 +30,7 @@
             --switch-bg: #30363d;
         }
 
+        /* Light Theme Variables */
         body.light-theme {
             --bg-color: #f6f8fa;
             --container-bg: #ffffff;
@@ -72,6 +73,7 @@
             margin-bottom: 20px;
         }
 
+        /* Swapped Pill Logic: Handle moves to Sun (left) on Dark, and Moon (right) on Light */
         .theme-pill-switch {
             position: relative;
             width: 58px;
@@ -90,8 +92,8 @@
         }
 
         .theme-pill-switch i { font-size: 12px; z-index: 2; line-height: 1; }
-        .theme-pill-switch .fa-sun { color: #e3b341; }
         .theme-pill-switch .fa-moon { color: #8b949e; }
+        .theme-pill-switch .fa-sun { color: #e3b341; }
 
         .theme-pill-handle {
             position: absolute;
@@ -106,6 +108,8 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
+        /* Clicking Sun removes 'light-theme' class -> Handle sits at Left (transX 0) */
+        /* Clicking Moon adds 'light-theme' class -> Handle slides to Right (transX 28px) */
         body.light-theme .theme-pill-handle { transform: translateX(28px); }
 
         .quiz-container {
@@ -232,7 +236,7 @@
         .info-trigger:hover { opacity: 1; color: var(--selected-border); }
         .inline-explain-modal { background-color: var(--card-hover); border-left: 4px solid var(--selected-border); padding: 14px; border-radius: 0 10px 10px 0; font-size: 14px; margin-top: 12px; display: none; line-height: 1.5; }
 
-        /* Animated High Tension Suspense Loader Layout */
+        /* High Tension Suspense Loader Layout */
         .loading-layout { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; text-align: center; }
         .suspense-spinner { border: 4px solid var(--border-color); border-left-color: var(--accent-color); border-radius: 50%; width: 56px; height: 56px; animation: quickSpin 0.75s linear infinite; margin-bottom: 24px; }
         @keyframes quickSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -290,7 +294,7 @@
         <div class="subtitle">Answer a few quick questions to identify your perfect 3D hardware match</div>
         <div id="resume-container"></div>
         <p style="line-height: 1.6; font-size: 15px; color: var(--text-color); opacity: 0.85; text-align: center; margin-bottom: 32px;">
-            Input your budget range, tool requirements, and toolhead setups (1 Nozzle, 2 Nozzles, or Automated Changing Layouts) to map your hardware match profile.
+            Input your budget range, tool requirements, and toolhead nozzle counts to correctly evaluate structural system hardware profiles.
         </p>
         <button class="btn" onclick="startQuiz(false)">
             <span>Begin Hardware Assessment</span>
@@ -369,7 +373,7 @@
     let temporarySelection = null;
     let finalRankedMatches = [];
 
-    // Core product database containing custom layouts mapped with accurate nozzle indices
+    // Core printer configuration profiles with specific built-in nozzle capacities
     const printerModels = [
         { name: "A1 mini", form: "open", mat: "basic", size: "small", ams: "no", laser: "no", nozzle_setup: "1", price: 149, desc: "Ultra-quiet entry space-saver. Operates a highly functional single active extrusion nozzle setup." },
         { name: "A1 mini Combo (With AMS lite)", form: "open", mat: "basic", size: "small", ams: "yes", laser: "no", nozzle_setup: "1", price: 259, desc: "The entry 4-colour printing setup feeding systematically into a single active hotend assembly." },
@@ -439,12 +443,12 @@
         },
         {
             key: "nozzle_config",
-            text: "Which nozzle configuration layout do you require?",
-            explain: "Select the required architectural toolhead capability matching your precision multi-part output goals.",
+            text: "How many physical nozzles does the printer have built-in?",
+            explain: "Isolate precise machine toolhead counts to match your production goals.",
             options: [
-                { text: "1 Nozzle Architecture", icon: "fa-square", hint: "Standard layout baseline execution path (A1, A1 mini, P2S, P series).", value: "1" },
-                { text: "2 Nozzles Architecture (Dual Setup)", icon: "fa-table-columns", hint: "Independent dual-nozzle execution system workflows (X2D, H2D series).", value: "2" },
-                { text: "Automated Changing Nozzles System", icon: "fa-arrows-spin", hint: "Robotic carousel swaps mechanical tools mid-print on demand (H2C series).", value: "changing" }
+                { text: "1 Nozzle Built-In", icon: "fa-square", hint: "Single active filament extrusion block path (A1, A1 mini, P2S, P-Series).", value: "1" },
+                { text: "2 Nozzles Built-In (Dual Setup)", icon: "fa-table-columns", hint: "Two independent gantry nozzles executing complex pathing (X2D, H2D series).", value: "2" },
+                { text: "Automated Changing Nozzles System", icon: "fa-arrows-spin", hint: "Robotic carousel swaps hotends mid-print dynamically (H2C series).", value: "changing" }
             ]
         },
         {
@@ -468,6 +472,7 @@
         }
     ];
 
+    // Swapped: Dark mode is active when class is absent (Sun position). Light mode triggers on class addition (Moon position).
     function toggleTheme() { document.body.classList.toggle('light-theme'); }
 
     window.onload = function() {
@@ -508,7 +513,7 @@
 
     function renderQuestion() {
         if (currentQuestionIndex >= questions.length) {
-            executeSuspenseLoaderPause(); // Rerouted flow to slide into tension loader
+            executeSuspenseLoaderPause();
             return;
         }
 
@@ -684,7 +689,6 @@
         });
     }
 
-    // High Tension Suspense loading implementation sequence
     function executeSuspenseLoaderPause() {
         document.getElementById('quiz-screen').classList.remove('active');
         document.getElementById('loading-screen').classList.add('active');
@@ -692,7 +696,7 @@
         setTimeout(() => {
             document.getElementById('loading-screen').classList.remove('active');
             calculateResult();
-        }, 2200); // 2.2 second calculation delay to drive engagement tension
+        }, 2200); 
     }
 
     function calculateResult() {
@@ -731,7 +735,6 @@
             const actionBlock = document.createElement('div');
             actionBlock.className = 'action-block';
             
-            // Rebranded action trigger pointing directly to Specification Sheets
             const btnSpec = document.createElement('button');
             btnSpec.className = "btn";
             btnSpec.innerHTML = "<i class='fa-solid fa-list-check'></i> View Specification Sheet";
@@ -760,7 +763,6 @@
         });
     }
 
-    // Modal data generator renamed and rebranded as Specification Sheet
     function openSpecificationSheet(selectedPrinter) {
         const benchmark = finalRankedMatches[0]; 
         document.getElementById('compare-title').innerText = `${selectedPrinter.name} Specification Sheet`;
@@ -771,7 +773,7 @@
             <tr><td>Standard MSRP</td><td>£${selectedPrinter.price}.00</td><td>£${benchmark.price}.00</td></tr>
             <tr><td>Build Chamber Scale</td><td>${selectedPrinter.size.toUpperCase()}</td><td>${benchmark.size.toUpperCase()}</td></tr>
             <tr><td>Enclosed Shell Layout</td><td>${selectedPrinter.form === 'enclosed' ? 'Yes' : 'No'}</td><td>${benchmark.form === 'enclosed' ? 'Yes' : 'No'}</td></tr>
-            <tr><td>Nozzle Extrusion Config Layout</td><td>${selectedPrinter.nozzle_setup === 'changing' ? 'Automated Changing' : selectedPrinter.nozzle_setup + ' Nozzle(s)'}</td><td>${benchmark.nozzle_setup === 'changing' ? 'Automated Changing' : benchmark.nozzle_setup + ' Nozzle(s)'}</td></tr>
+            <tr><td>Nozzle Count Architecture</td><td>${selectedPrinter.nozzle_setup === 'changing' ? 'Automated Changing Setup' : selectedPrinter.nozzle_setup + ' Fixed Nozzle(s)'}</td><td>${benchmark.nozzle_setup === 'changing' ? 'Automated Changing Setup' : benchmark.nozzle_setup + ' Fixed Nozzle(s)'}</td></tr>
             <tr><td>Multi-Filament System</td><td>${selectedPrinter.ams === 'yes' ? 'Yes' : 'No'}</td><td>${benchmark.ams === 'yes' ? 'Yes' : 'No'}</td></tr>
         `;
         document.getElementById('compare-modal').style.display = 'flex';
