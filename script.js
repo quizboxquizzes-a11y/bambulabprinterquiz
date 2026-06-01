@@ -249,7 +249,6 @@ function renderQuestion() {
             hintSpan.innerText = opt.hint;
             body.appendChild(hintSpan);
             card.appendChild(body);
-            card.appendChild(optionsContainer);
             
             card.onclick = () => {
                 document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
