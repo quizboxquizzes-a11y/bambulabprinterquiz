@@ -8,7 +8,6 @@ let finalRankedMatches = [];
 let currentCurrency = 'GBP';
 let currencySymbols = { GBP: '£', USD: '$', EUR: '€' };
 let currencyRates = { GBP: 1.0, USD: 1.28, EUR: 1.18 };
-let markedModelCompareList = [];
 
 const printerModels = [
     { name: "A1 mini", form: "open", mat: "basic", size: "small", ams: "no", laser: "no", nozzle_setup: "1", price: 149, desc: "Ultra-quiet entry space-saver. Operates a highly functional single active extrusion nozzle setup." },
@@ -250,6 +249,7 @@ function renderQuestion() {
             hintSpan.innerText = opt.hint;
             body.appendChild(hintSpan);
             card.appendChild(body);
+            card.appendChild(optionsContainer);
             
             card.onclick = () => {
                 document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
@@ -374,8 +374,6 @@ function calculateResult() {
     }
 
     finalRankedMatches = getRankedMatches();
-    markedModelCompareList = [];
-    updateCompareActionBar();
 
     const container = document.getElementById('results-list-container');
     container.innerHTML = '';
@@ -384,23 +382,6 @@ function calculateResult() {
         const isBest = idx === 0;
         const card = document.createElement('div');
         card.className = `result-item-card ${isBest ? 'best-match' : ''}`;
-
-        // Multicard Comparison Checklist Selection
-        const selectorHolder = document.createElement('div');
-        selectorHolder.className = 'card-select-checkbox-holder';
-        
-        const checkInput = document.createElement('input');
-        checkInput.type = 'checkbox';
-        checkInput.id = `compare-check-${idx}`;
-        checkInput.onchange = (e) => toggleModelComparisonMark(printer, e.target.checked);
-        
-        const checkLabel = document.createElement('label');
-        checkLabel.htmlFor = `compare-check-${idx}`;
-        checkLabel.innerText = " Include in custom specification table comparison";
-        
-        selectorHolder.appendChild(checkInput);
-        selectorHolder.appendChild(checkLabel);
-        card.appendChild(selectorHolder);
 
         const badge = document.createElement('div');
         badge.className = `result-badge ${isBest ? 'badge-primary' : 'badge-secondary'}`;
@@ -416,16 +397,6 @@ function calculateResult() {
         description.style.fontSize = '14px'; description.style.opacity = '0.85'; description.style.lineHeight = '1.55';
         description.innerText = printer.desc;
         card.appendChild(description);
-
-        const actionBlock = document.createElement('div');
-        actionBlock.className = 'action-block';
-        
-        const btnSpec = document.createElement('button');
-        btnSpec.className = "btn";
-        btnSpec.innerHTML = "<i class='fa-solid fa-list-check'></i> Isolation Sheet Spec";
-        btnSpec.onclick = () => openSingleSpecificationSheet(printer);
-        actionBlock.appendChild(btnSpec);
-        card.appendChild(actionBlock);
 
         const matrix = document.createElement('div');
         matrix.className = 'matrix-container';
@@ -446,120 +417,7 @@ function calculateResult() {
         card.appendChild(matrix);
         container.appendChild(card);
     });
-
-    renderFilamentFlushCalculatorWidget();
 }
-
-function toggleModelComparisonMark(printer, isChecked) {
-    if(isChecked) {
-        markedModelCompareList.push(printer);
-    } else {
-        markedModelCompareList = markedModelCompareList.filter(m => m.name !== printer.name);
-    }
-    updateCompareActionBar();
-}
-
-function updateCompareActionBar() {
-    const btn = document.getElementById('compare-selected-btn');
-    const countDisplay = document.getElementById('compare-count');
-    countDisplay.innerText = markedModelCompareList.length;
-    btn.disabled = markedModelCompareList.length < 2;
-}
-
-// Real-time Multi-Material Filament Waste & Flush Calculator Widget
-function renderFilamentFlushCalculatorWidget() {
-    const calcContainer = document.getElementById('filament-calc-container');
-    calcContainer.innerHTML = '';
-
-    const carriesAMS = finalRankedMatches.length > 0 && finalRankedMatches[0].ams === 'yes';
-    if (!carriesAMS) return; 
-
-    const widgetBox = document.createElement('div');
-    widgetBox.className = 'flush-calc-card';
-    widgetBox.innerHTML = `
-        <h3 style="margin:0 0 6px 0; font-size:16px;"><i class="fa-solid fa-calculator" style="color:var(--selected-border);"></i> Intelligent AMS Flush Projection</h3>
-        <p style="margin:0; font-size:13px; opacity:0.8; line-height:1.4;">Based on your premium selection of an <strong>AMS 2 Pro combo</strong> machine ecosystem framework, your typical transition waste factor indices calculate as:</p>
-        <div class="calc-grid">
-            <div class="calc-metric-box">
-                <div class="calc-metric-num">~250-400</div>
-                <div style="font-size:11px; font-weight:600; opacity:0.7; margin-top:4px;">Average Flushes Per Multi-Color Print</div>
-            </div>
-            <div class="calc-metric-box">
-                <div class="calc-metric-num" style="color:var(--tag-fail-text);">£0.04 - £0.09</div>
-                <div style="font-size:11px; font-weight:600; opacity:0.7; margin-top:4px;">Purge Cost Deviation Factor Per Swap</div>
-            </div>
-        </div>
-    `;
-    calcContainer.appendChild(widgetBox);
-}
-
-function openSingleSpecificationSheet(printer) {
-    markedModelCompareList = [printer, finalRankedMatches[0]]; 
-    openMultiComparisonModal(true);
-}
-
-// Dynamic Multi-Column Processing Matrix with Relative Build Area Cubes
-function openMultiComparisonModal(isSingleView = false) {
-    if(markedModelCompareList.length === 0) return;
-    
-    document.getElementById('compare-title').innerText = isSingleView ? `${markedModelCompareList[0].name} Specification Sheet` : "Multi-Chassis Matrix Check View";
-    
-    // Dynamic Scale Volume Box Visualizer Logic
-    const visualizerContainer = document.getElementById('visualizer-box-container');
-    visualizerContainer.innerHTML = '';
-    
-    let sizeDimensions = { small: 40, standard: 70, large: 100 };
-
-    markedModelCompareList.forEach(m => {
-        const cubeWrapper = document.createElement('div');
-        cubeWrapper.className = 'v-box-wrapper';
-        
-        const cube = document.createElement('div');
-        cube.className = 'v-cube';
-        let hValue = sizeDimensions[m.size];
-        cube.style.height = `${hValue}px`;
-        cube.style.width = `${hValue}px`;
-        
-        const label = document.createElement('span');
-        label.style.marginTop = '6px';
-        label.innerText = `${m.name.split(' ')[0]} (${m.size})`;
-
-        cubeWrapper.appendChild(cube);
-        cubeWrapper.appendChild(label);
-        visualizerContainer.appendChild(cubeWrapper);
-    });
-
-    const table = document.getElementById('compare-table-data');
-    
-    let headerRow = `<tr><th>Hardware Feature Axis</th>`;
-    markedModelCompareList.forEach(m => { headerRow += `<th>${m.name}</th>`; });
-    headerRow += `</tr>`;
-
-    let priceRow = `<tr><td>Standard MSRP</td>`;
-    markedModelCompareList.forEach(m => { priceRow += `<td><strong>${formatPrice(m.price)}</strong></td>`; });
-    priceRow += `</tr>`;
-
-    let chamberRow = `<tr><td>Build Chamber Scale</td>`;
-    markedModelCompareList.forEach(m => { chamberRow += `<td>${m.size.toUpperCase()}</td>`; });
-    chamberRow += `</tr>`;
-
-    let enclosedRow = `<tr><td>Enclosed Shell Layout</td>`;
-    markedModelCompareList.forEach(m => { enclosedRow += `<td>${m.form === 'enclosed' ? 'Yes' : 'No'}</td>`; });
-    enclosedRow += `</tr>`;
-
-    let nozzleRow = `<tr><td>Nozzle Configuration</td>`;
-    markedModelCompareList.forEach(m => { nozzleRow += `<td>${m.nozzle_setup === 'changing' ? 'Automated Changer' : m.nozzle_setup + ' Fixed'}</td>`; });
-    nozzleRow += `</tr>`;
-
-    let amsRow = `<tr><td>Multi-Filament Feeding</td>`;
-    markedModelCompareList.forEach(m => { amsRow += `<td>${m.ams === 'yes' ? 'AMS 2 Pro combo' : 'None'}</td>`; });
-    amsRow += `</tr>`;
-
-    table.innerHTML = headerRow + priceRow + chamberRow + enclosedRow + nozzleRow + amsRow;
-    document.getElementById('compare-modal').style.display = 'flex';
-}
-
-function closeCompareModal() { document.getElementById('compare-modal').style.display = 'none'; }
 
 function copyMarkdownReport() {
     if (!finalRankedMatches.length) return;
