@@ -11,7 +11,7 @@
 
     <style>
         :root {
-            /* Dark Mode (Default) */
+            /* Dark Mode colors */
             --bg-color: #0d1117;
             --container-bg: #161b22;
             --text-color: #c9d1d9;
@@ -31,7 +31,7 @@
         }
 
         body.light-theme {
-            /* Light Mode Overrides */
+            /* Light Mode colors */
             --bg-color: #f6f8fa;
             --container-bg: #ffffff;
             --text-color: #24292f;
@@ -65,37 +65,35 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        /* 1. PILL THEME SWITCH MECHANISM */
         .top-toolbar {
             width: 100%;
-            max-width: 650px;
+            max-width: 600px;
             display: flex;
             justify-content: flex-end;
             margin-bottom: 16px;
         }
 
+        /* SHORTER PILL SWITCH */
         .theme-pill-switch {
             position: relative;
-            width: 76px;
-            height: 34px;
+            width: 54px;
+            height: 28px;
             background-color: var(--switch-bg);
             border-radius: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 8px;
+            padding: 0 6px;
             box-sizing: border-box;
             user-select: none;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .theme-pill-switch i {
-            font-size: 14px;
+            font-size: 11px;
             z-index: 2;
-            transition: color 0.3s;
         }
-
         .theme-pill-switch .fa-sun { color: #e3b341; }
         .theme-pill-switch .fa-moon { color: #8b949e; }
 
@@ -103,53 +101,47 @@
             position: absolute;
             top: 3px;
             left: 3px;
-            width: 28px;
-            height: 28px;
+            width: 22px;
+            height: 22px;
             background-color: var(--container-bg);
             border-radius: 50%;
             z-index: 1;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.2s ease;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         body.light-theme .theme-pill-handle {
-            transform: translateX(42px);
+            transform: translateX(26px);
         }
 
-        /* 2. LAYOUT FRAMEWORKS & SLIDE ANIMATIONS */
         .quiz-container {
             background-color: var(--container-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 32px;
             width: 100%;
-            max-width: 650px;
+            max-width: 600px;
             box-shadow: 0 8px 24px var(--shadow-color);
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
         }
 
-        .screen {
-            display: none;
-        }
-
+        .screen { display: none; }
         .screen.active {
             display: block;
-            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: slideIn 0.3s ease forwards;
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
+            from { opacity: 0; transform: translateX(10px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* TYPOGRAPHY */
         h1, h3, h4 { color: var(--heading-color); font-weight: 600; margin-top: 0; }
-        h1 { font-size: 28px; text-align: center; margin-bottom: 8px; }
+        h1 { font-size: 26px; text-align: center; margin-bottom: 8px; }
         .subtitle { text-align: center; color: var(--text-color); opacity: 0.7; margin-bottom: 24px; font-size: 14px; }
 
-        /* BUTTONS */
         .btn {
             background-color: var(--accent-color);
             color: white;
@@ -167,40 +159,29 @@
             transition: background 0.2s, transform 0.1s;
         }
         .btn:hover { background-color: var(--accent-hover); }
-        .btn:active { transform: scale(0.98); }
         .btn:disabled { background-color: var(--card-hover); color: var(--text-color); opacity: 0.5; cursor: not-allowed; border-color: var(--border-color); }
         .btn-secondary { background-color: var(--card-hover); color: var(--text-color); border: 1px solid var(--border-color); }
 
-        /* OPTION CARDS ENHANCED */
-        .options-list { display: flex; flex-direction: column; gap: 14px; margin: 20px 0; }
+        .options-list { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
 
         .option-card {
             background-color: var(--container-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 18px;
+            padding: 16px;
             cursor: pointer;
-            position: relative;
             display: flex;
-            gap: 16px;
+            gap: 14px;
             align-items: flex-start;
-            transition: border-color 0.2s, background-color 0.2s, transform 0.2s;
+            transition: border-color 0.2s, background-color 0.2s;
         }
-        .option-card:hover { background-color: var(--card-hover); transform: translateY(-1px); }
+        .option-card:hover { background-color: var(--card-hover); }
         .option-card.selected { border-color: var(--selected-border); background-color: rgba(88, 166, 255, 0.04); }
 
-        .card-icon {
-            font-size: 20px;
-            color: var(--accent-color);
-            margin-top: 2px;
-            width: 24px;
-            text-align: center;
-        }
-
+        .card-icon { font-size: 18px; color: var(--accent-color); margin-top: 2px; width: 20px; text-align: center; }
         .card-body { flex: 1; }
         .hint { display: block; font-size: 13px; color: var(--text-color); opacity: 0.7; margin-top: 4px; line-height: 1.4; }
 
-        /* PROGRESS & WARNINGS */
         .progress-bar-container { background-color: var(--border-color); height: 6px; border-radius: 3px; margin-bottom: 24px; overflow: hidden; }
         .progress-bar { background-color: var(--accent-color); height: 100%; width: 0%; transition: width 0.3s ease; }
 
@@ -219,92 +200,65 @@
             gap: 8px;
         }
 
-        /* FLOATING SIDEBAR INDEX */
+        /* LIVE LEADERBOARD */
         .corner-leaderboard-widget {
             position: fixed;
             bottom: 25px;
             right: 25px;
-            width: 260px;
+            width: 240px;
             background-color: var(--widget-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 14px;
+            padding: 12px;
             box-shadow: 0 6px 20px var(--shadow-color);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             z-index: 100;
             box-sizing: border-box;
             display: none;
         }
         .corner-leaderboard-widget.visible { display: block; }
+        .widget-header { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-color); opacity: 0.8; font-weight: 700; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; }
+        .leaderboard-rows { display: flex; flex-direction: column; gap: 4px; }
+        .leaderboard-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 4px 6px; border-radius: 4px; }
+        .leaderboard-row.top-tier { background: rgba(46, 164, 79, 0.08); font-weight: 600; }
+        .row-pct { font-family: monospace; color: var(--accent-color); }
 
-        .widget-header {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--text-color);
-            opacity: 0.8;
-            font-weight: 700;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 6px;
-        }
-        .leaderboard-rows { display: flex; flex-direction: column; gap: 6px; }
-        .leaderboard-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 8px; border-radius: 6px; background: rgba(0, 0, 0, 0.02); }
-        .leaderboard-row.top-tier { background: rgba(46, 164, 79, 0.08); border: 1px solid rgba(46, 164, 79, 0.25); font-weight: 600; }
-        .row-pct { font-family: monospace; color: var(--accent-color); font-weight: 700; }
+        /* SIMPLE BUDGET SLIDER */
+        .slider-wrapper { margin: 20px 0; text-align: center; }
+        .slider-readout { font-size: 24px; font-weight: 700; color: var(--accent-color); margin-bottom: 10px; }
+        .range-slider { width: 100%; background: var(--border-color); height: 6px; border-radius: 4px; outline: none; }
 
-        /* BUDGET SLIDER POP */
-        .slider-wrapper { margin: 25px 0; }
-        .slider-readout { font-size: 22px; font-weight: 700; color: var(--accent-color); text-align: center; margin-bottom: 10px; }
-        .range-slider { width: 100%; -webkit-appearance: none; background: var(--border-color); height: 8px; border-radius: 4px; outline: none; }
-        .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-color); cursor: pointer; transition: transform 0.1s; }
-        .range-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-        /* TOOLTIP INFOBAR */
-        .info-trigger { background: none; border: none; color: var(--text-color); opacity: 0.5; cursor: pointer; padding: 0 4px; font-size: 14px; }
+        /* HELP EXPLANATION BOX */
+        .info-trigger { background: none; border: none; color: var(--text-color); opacity: 0.5; cursor: pointer; font-size: 16px; }
         .info-trigger:hover { opacity: 1; color: var(--selected-border); }
-        
-        .inline-explain-modal {
-            background-color: var(--card-hover);
-            border-left: 4px solid var(--selected-border);
-            padding: 12px;
-            border-radius: 0 8px 8px 0;
-            font-size: 13px;
-            margin-top: 10px;
-            display: none;
-            line-height: 1.5;
-        }
+        .inline-explain-modal { background-color: var(--card-hover); border-left: 4px solid var(--selected-border); padding: 12px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 10px; display: none; line-height: 1.4; }
 
-        /* MATRIX & RESULTS OUTPUT */
+        /* RESULTS CARDS */
         .results-list { display: flex; flex-direction: column; gap: 16px; margin-top: 20px; }
-        .result-item-card { border: 1px solid var(--border-color); background-color: rgba(255, 255, 255, 0.01); padding: 22px; border-radius: 10px; }
-        .result-item-card.best-match { border-color: var(--accent-color); background-color: rgba(46, 164, 79, 0.04); box-shadow: 0 4px 12px rgba(46, 164, 79, 0.05); }
+        .result-item-card { border: 1px solid var(--border-color); padding: 20px; border-radius: 10px; }
+        .result-item-card.best-match { border-color: var(--accent-color); background-color: rgba(46, 164, 79, 0.03); }
         .result-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-bottom: 10px; text-transform: uppercase; }
         .badge-primary { background-color: var(--accent-color); color: #fff; }
         .badge-secondary { background-color: var(--border-color); color: var(--text-color); }
-        .result-item-title { font-size: 22px; font-weight: 700; color: var(--heading-color); margin-bottom: 6px; }
+        .result-item-title { font-size: 20px; font-weight: 700; color: var(--heading-color); margin-bottom: 4px; }
         
-        .action-block { display: flex; gap: 10px; margin-top: 14px; }
-        .action-block .btn { padding: 8px 16px; font-size: 13px; width: auto; }
+        .action-block { display: flex; gap: 10px; margin-top: 12px; }
+        .action-block .btn { padding: 8px 14px; font-size: 13px; width: auto; }
 
-        .matrix-container { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .matrix-item { padding: 6px 10px; border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .matrix-container { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .matrix-item { padding: 6px 10px; border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; }
         .mat-pass { background-color: var(--tag-pass); color: var(--tag-pass-text); }
         .mat-fail { background-color: var(--tag-fail); color: var(--tag-fail-text); }
 
-        /* SIDE BY SIDE COMPARISON GRID */
-        .comparison-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
-        .comparison-window { background: var(--container-bg); border: 1px solid var(--border-color); width: 90%; max-width: 600px; border-radius: 12px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .compare-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
-        .compare-table th, .compare-table td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
+        /* COMPARE OVERLAY */
+        .comparison-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 1000; align-items: center; justify-content: center; }
+        .comparison-window { background: var(--container-bg); border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 12px; padding: 20px; }
+        .compare-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+        .compare-table th, .compare-table td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
         .compare-table th { background: var(--card-hover); color: var(--heading-color); }
 
         .resume-banner { background: rgba(88, 166, 255, 0.08); border: 1px solid var(--selected-border); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .status-box { font-size: 13px; color: var(--text-color); opacity: 0.7; margin-top: 20px; text-align: center; }
+        .status-box { font-size: 13px; color: var(--text-color); opacity: 0.6; margin-top: 16px; text-align: center; }
 
         @media (max-width: 768px) {
             .corner-leaderboard-widget { position: static; width: 100%; margin-top: 16px; }
@@ -314,7 +268,7 @@
 <body>
 
 <div class="top-toolbar">
-    <div class="theme-pill-switch" onclick="toggleTheme()" title="Switch Design Palette">
+    <div class="theme-pill-switch" onclick="toggleTheme()">
         <i class="fa-solid fa-sun"></i>
         <i class="fa-solid fa-moon"></i>
         <div class="theme-pill-handle"></div>
@@ -324,16 +278,16 @@
 <div class="quiz-container">
     <div id="intro-screen" class="screen active">
         <h1>Find Your Bambu Lab Printer</h1>
-        <div class="subtitle">An advanced interactive deployment matrix for personal & hardware sourcing</div>
+        <div class="subtitle">Take this quick quiz to find the perfect 3D printer for you!</div>
         
         <div id="resume-container"></div>
 
-        <p style="line-height: 1.6; font-size: 14px; color: var(--text-color); opacity: 0.8; text-align: center; margin-bottom: 30px;">
-            Input your mechanical footprints, thermal demands, and budget parameters to compute a live real-time compatibility match across the complete current hardware catalog.
+        <p style="line-height: 1.5; font-size: 14px; color: var(--text-color); opacity: 0.8; text-align: center; margin-bottom: 24px;">
+            Tell us about your space, your budget, and what you want to make. We will match you with the best model in real time.
         </p>
         <button class="btn" onclick="startQuiz(false)">
-            <span>Initialize Quiz</span>
-            <i class="fa-solid fa-bolt"></i>
+            <span>Start the Quiz</span>
+            <i class="fa-solid fa-play"></i>
         </button>
     </div>
 
@@ -342,9 +296,9 @@
             <div id="progress" class="progress-bar"></div>
         </div>
         
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3 id="question-text" style="margin:0;">Loading configuration parameters...</h3>
-            <button id="explain-btn" class="info-trigger" onclick="toggleExplanation()" title="Explain this technology template"><i class="fa-solid fa-circle-question"></i></button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 id="question-text" style="margin:0; font-size:18px;">Loading question...</h3>
+            <button id="explain-btn" class="info-trigger" onclick="toggleExplanation()" title="Learn more about this choice"><i class="fa-solid fa-circle-question"></i></button>
         </div>
 
         <div id="explain-modal" class="inline-explain-modal"></div>
@@ -353,33 +307,33 @@
         
         <div id="warning-box" class="soft-warning-box">
             <i class="fa-solid fa-triangle-exclamation"></i>
-            <span id="warning-text">Structural optimization discrepancy noted.</span>
+            <span id="warning-text">Heads up notice!</span>
         </div>
 
         <div class="nav-buttons">
-            <button id="back-btn" class="btn btn-secondary" onclick="goBack()"><i class="fa-solid fa-chevron-left"></i> Back</button>
-            <button id="next-btn" class="btn" onclick="goNext()" disabled>Continue Step <i class="fa-solid fa-chevron-right"></i></button>
+            <button id="back-btn" class="btn btn-secondary" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <button id="next-btn" class="btn" onclick="goNext()" disabled>Next <i class="fa-solid fa-arrow-right"></i></button>
         </div>
 
-        <div id="status-box" class="status-box">Processing selections...</div>
+        <div id="status-box" class="status-box">Calculating your top matches...</div>
     </div>
 
     <div id="results-screen" class="screen">
-        <h1>Computed Hardware Selection</h1>
-        <div class="subtitle">Optimized machine options calculated from your preference profile:</div>
+        <h1>Your Best Matches!</h1>
+        <div class="subtitle">Based on your answers, here are your top 3 recommended options:</div>
         
         <div id="results-list-container" class="results-list"></div>
         
         <div style="margin-top: 24px; display: flex; gap: 12px;">
-            <button class="btn" style="font-size: 14px;" onclick="copyMarkdownReport()"><i class="fa-solid fa-copy"></i> Copy Record</button>
-            <button class="btn btn-secondary" style="font-size: 14px;" onclick="resetQuiz()"><i class="fa-solid fa-rotate-right"></i> Restart Engine</button>
+            <button class="btn" style="font-size: 14px;" onclick="copyMarkdownReport()"><i class="fa-solid fa-copy"></i> Copy Results</button>
+            <button class="btn btn-secondary" style="font-size: 14px;" onclick="resetQuiz()"><i class="fa-solid fa-rotate-right"></i> Start Over</button>
         </div>
     </div>
 </div>
 
 <div id="sidebar" class="corner-leaderboard-widget">
     <div class="widget-header">
-        <span>Live Index Rank</span>
+        <span>Live Match Ranking</span>
         <span style="color: var(--accent-color); font-weight:bold;">● Match %</span>
     </div>
     <div id="leaderboard" class="leaderboard-rows"></div>
@@ -387,9 +341,9 @@
 
 <div id="compare-modal" class="comparison-overlay" onclick="closeCompareModal()">
     <div class="comparison-window" onclick="event.stopPropagation()">
-        <h3 id="compare-title">Product Matrix Comparison</h3>
+        <h3 id="compare-title" style="font-size:18px;">Printer Comparison</h3>
         <table class="compare-table" id="compare-table-data"></table>
-        <button class="btn btn-secondary" style="margin-top:20px; width:auto; float:right;" onclick="closeCompareModal()">Close Window</button>
+        <button class="btn btn-secondary" style="margin-top:16px; width:auto; float:right; padding:6px 12px; font-size:13px;" onclick="closeCompareModal()">Close</button>
     </div>
 </div>
 
@@ -401,97 +355,97 @@
     let finalRankedMatches = [];
 
     const printerModels = [
-        { name: "A1 mini", form: "A", mat: "basic", budget: "budget", size: "small", ams: "no", laser: "none", price: 299, desc: "Incredibly compact, affordable, and accurate. Best for high-quality small prints on a tight desk footprint." },
-        { name: "A1 mini Combo", form: "A", mat: "basic", budget: "budget", size: "small", ams: "yes", laser: "none", price: 449, desc: "The easiest and most affordable way to get started with multi-color 3D printing in a space-conscious setup." },
-        { name: "A1", form: "A", mat: "basic", budget: "budget", size: "standard", ams: "no", laser: "none", price: 399, desc: "The benchmark open-frame desktop printer. Clean operation, toolless maintenance, and fantastic value." },
-        { name: "A1 Combo", form: "A", mat: "basic", budget: "budget", size: "standard", ams: "yes", laser: "none", price: 559, desc: "An outstanding user-friendly choice for reliable multi-color printing on a wide desktop workspace." },
-        { name: "P1P", form: "P_X", mat: "basic", budget: "budget", size: "standard", ams: "no", laser: "none", price: 599, desc: "An entry enclosed CoreXY frame layout. High speed kinematic printing scaled down to baseline features." },
-        { name: "P1S", form: "P_X", mat: "advanced", budget: "budget", size: "standard", ams: "no", laser: "none", price: 699, desc: "Affordable enclosed desktop setup. Keeps temperatures stable for printing tougher plastics without warping." },
-        { name: "P1S Combo", form: "P_X", mat: "advanced", budget: "budget", size: "standard", ams: "yes", laser: "none", price: 949, desc: "The sweet spot choice for everyday users needing a multi-color system inside a protective enclosure." },
-        { name: "P2S", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "no", laser: "none", price: 899, desc: "An upgraded enclosed machine built to handle a continuous work cycle with rugged internals." },
-        { name: "P2S Combo", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "yes", laser: "none", price: 1149, desc: "A robust production setup bundled alongside seamless multi-material spool switching." },
-        { name: "X1-Carbon", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "no", laser: "none", price: 1199, desc: "The reliable desktop benchmark for advanced engineering materials, helped by carbon-fiber tuning." },
-        { name: "X1-Carbon Combo", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "yes", laser: "none", price: 1449, desc: "The definitive choice for multi-color engineering applications using premium hardware automation." },
-        { name: "X2D", form: "P_X", mat: "advanced", budget: "flagship", size: "standard", ams: "no", laser: "none", price: 1599, desc: "A top-tier enclosed desktop setup featuring next-generation sensor controls." },
-        { name: "X2D Combo", form: "P_X", mat: "advanced", budget: "flagship", size: "standard", ams: "yes", laser: "none", price: 1849, desc: "Premium enclosed multi-material platform offering ultimate sensor logic and quality checks." },
-        { name: "X1E Enterprise", form: "P_X", mat: "extreme", budget: "flagship", size: "standard", ams: "no", laser: "none", price: 2499, desc: "Equipped with advanced data encryption network options and an actively heated build chamber." },
-        { name: "H2S Standard", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "no", laser: "none", price: 1999, desc: "An entry-level approach to getting clean engineering prints across a massive workspace scale." },
-        { name: "H2S Combo", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "yes", laser: "none", price: 2399, desc: "Large-scale build volume paired with multi-material capability to cut down assembly work." },
-        { name: "H2S Laser Full Combo", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "yes", laser: "10w", price: 2899, desc: "Combines giant multi-color print sizes with an adaptable low-power surface marking laser." },
-        { name: "H2D Standard", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "no", laser: "none", price: 2999, desc: "A heavy-duty professional build platform tailored for continuous fabrication environments." },
-        { name: "H2D Combo", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "yes", laser: "none", price: 3399, desc: "The workshop choice for wide multi-color or water-soluble support engineering layouts." },
-        { name: "H2D Laser Combo", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "yes", laser: "10w", price: 3899, desc: "Continuous large format extrusion accompanied by a surface engraving laser kit." },
-        { name: "H2D Pro", form: "H", mat: "advanced", budget: "flagship", size: "large", ams: "no", laser: "none", price: 3500, desc: "An air-gapped secure model made for closed network setups needing heavy part sizing." },
-        { name: "H2C Vortek Combo", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "none", price: 4200, desc: "A premium production platform boasting high chamber heat control and automated nozzle swaps." },
-        { name: "H2C Laser Full Combo (10W)", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "10w", price: 4600, desc: "Flagship system tracking advanced polymers, multi-feed spools, and line engraving." },
-        { name: "H2C Laser Full Combo (40W)", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "40w", price: 4999, desc: "The ultimate bundle option providing maximum high-temp building alongside a thick-cutting laser module." }
+        { name: "A1 mini", form: "A", mat: "basic", budget: "budget", size: "small", ams: "no", laser: "none", price: 299, desc: "Tiny, low price, and super accurate. Best if you have limited desk space and want to make smaller items." },
+        { name: "A1 mini Combo", form: "A", mat: "basic", budget: "budget", size: "small", ams: "yes", laser: "none", price: 449, desc: "The easiest and cheapest way to print in multiple colors at the same time." },
+        { name: "A1", form: "A", mat: "basic", budget: "budget", size: "standard", ams: "no", laser: "none", price: 399, desc: "An open, easy-to-use desktop printer. Great value for everyday printing at home." },
+        { name: "A1 Combo", form: "A", mat: "basic", budget: "budget", size: "standard", ams: "yes", laser: "none", price: 559, desc: "A top family-friendly choice for reliable multi-color printing on a full-sized bed." },
+        { name: "P1P", form: "P_X", mat: "basic", budget: "budget", size: "standard", ams: "no", laser: "none", price: 599, desc: "An open-box frame built for extreme speed. Perfect if you just want to print basic materials fast." },
+        { name: "P1S", form: "P_X", mat: "advanced", budget: "budget", size: "standard", ams: "no", laser: "none", price: 699, desc: "Fully enclosed box style. Keeps heat inside so you can print tough plastics without them warping." },
+        { name: "P1S Combo", form: "P_X", mat: "advanced", budget: "budget", size: "standard", ams: "yes", laser: "none", price: 949, desc: "The absolute 'sweet spot' choice for multi-color printing inside a protective closed case." },
+        { name: "P2S", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "no", laser: "none", price: 899, desc: "An upgraded enclosed machine built for heavy daily use and faster print prep." },
+        { name: "P2S Combo", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "yes", laser: "none", price: 1149, desc: "A rugged workshop machine bundled with easy automatic multi-color spool switching." },
+        { name: "X1-Carbon", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "no", laser: "none", price: 1199, desc: "A premium machine built with a touch screen and internal camera. Great for heavy engineering plastics." },
+        { name: "X1-Carbon Combo", form: "P_X", mat: "advanced", budget: "performance", size: "standard", ams: "yes", laser: "none", price: 1449, desc: "The benchmark choice for advanced multi-color engineering projects using strong filaments." },
+        { name: "X2D", form: "P_X", mat: "advanced", budget: "flagship", size: "standard", ams: "no", laser: "none", price: 1599, desc: "Next-generation enclosed desktop printer with the latest AI sensors and error tracking." },
+        { name: "X2D Combo", form: "P_X", mat: "advanced", budget: "flagship", size: "standard", ams: "yes", laser: "none", price: 1849, desc: "Top-tier multi-color system with automated smart checks to make sure your prints never fail." },
+        { name: "X1E Enterprise", form: "P_X", mat: "extreme", budget: "flagship", size: "standard", ams: "no", laser: "none", price: 2499, desc: "Made for schools and high-end tech businesses. Includes an actively heated chamber and network security features." },
+        { name: "H2S Standard", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "no", laser: "none", price: 1999, desc: "A budget-friendly way to print massive industrial parts in a large closed chamber." },
+        { name: "H2S Combo", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "yes", laser: "none", price: 2399, desc: "Massive print room paired with multi-color functions so you don't have to glue small pieces together." },
+        { name: "H2S Laser Full Combo", form: "H", mat: "advanced", budget: "budget", size: "large", ams: "yes", laser: "10w", price: 2899, desc: "Combines giant multi-color 3D printing with a low-power laser for engraving details." },
+        { name: "H2D Standard", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "no", laser: "none", price: 2999, desc: "A heavy professional build station made for continuous parts manufacturing." },
+        { name: "H2D Combo", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "yes", laser: "none", price: 3399, desc: "The perfect workshop pick for giant multi-color parts or easy water-soluble support printing." },
+        { name: "H2D Laser Combo", form: "H", mat: "advanced", budget: "performance", size: "large", ams: "yes", laser: "10w", price: 3899, desc: "Continuous large-format printing that also includes a handy laser tool for carving shapes." },
+        { name: "H2D Pro", form: "H", mat: "advanced", budget: "flagship", size: "large", ams: "no", laser: "none", price: 3500, desc: "A highly secure model with no internet required, made for making big private prototypes." },
+        { name: "H2C Vortek Combo", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "none", price: 4200, desc: "A high-end factory model with automated nozzles and extreme heat controls." },
+        { name: "H2C Laser Full Combo (10W)", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "10w", price: 4600, desc: "Flagship scale tracking specialized plastic filaments, 4 multi-spools, and laser design tools." },
+        { name: "H2C Laser Full Combo (40W)", form: "H", mat: "extreme", budget: "flagship", size: "large", ams: "yes", laser: "40w", price: 4999, desc: "The ultimate all-in-one package with thick structural printing and a powerful cutting laser." }
     ];
 
     const questions = [
         {
             key: "max_budget",
-            text: "Establish your financial investment boundary limits",
-            explain: "Setting an up-front limit filters out models above your budget allocation and adjusts preference scoring curves.",
+            text: "What is your maximum budget?",
+            explain: "Move the slider to set your top budget. We will warn you or lower the score of printers that cost more than this amount.",
             isSlider: true,
             min: 300, max: 5000, step: 100
         },
         {
             key: "form_factor",
-            text: "What structural architecture layout is required?",
-            explain: "Bed-Slingers offer open modular access. CoreXY designs use enclosed fixed vertical axes for faster tracking and cleaner heat retention.",
+            text: "What shape or style of printer fits your space?",
+            explain: "Open Frame printers have a moving bed and are cheaper. Enclosed boxes are covered in glass/metal, keeping them quieter and safer from room drafts. Large formats are big industrial machines.",
             options: [
-                { text: "Open Frame (Bed-Slinger Layout)", icon: "fa-arrows-left-right", hint: "The build plate explicitly translates along the Y-Axis. Highly cost-efficient.", value: "A" },
-                { text: "Enclosed Desktop Box (CoreXY)", icon: "fa-cube", hint: "Fixed perimeter walls containing a tracking gantry. Quieter and structurally superior.", value: "P_X" },
-                { text: "Large Format Professional Platform", icon: "fa-industry", hint: "Heavy structural footprint built for wide-span components.", value: "H" }
+                { text: "Open Frame (Bed-Slinger Style)", icon: "fa-arrows-left-right", hint: "The print plate moves back and forth. Great for beginners on a budget.", value: "A" },
+                { text: "Enclosed Desktop Box (CoreXY Style)", icon: "fa-cube", hint: "Fully boxed in. Quiet, fast, and keeps the heat trapped inside perfectly.", value: "P_X" },
+                { text: "Large Format Professional Platform", icon: "fa-industry", hint: "A very large machine built to print giant industrial parts in one piece.", value: "H" }
             ]
         },
         {
             key: "materials",
-            text: "What filament material array will you use?",
-            explain: "Basic filaments don't warp in open air. Engineering materials (ABS/Carbon Fiber blends) demand enclosed air space to preserve cross-layer adhesion.",
+            text: "What materials do you want to print with?",
+            explain: "Basic plastics like PLA don't smell and print easily in open air. Engineering plastics like ABS or Carbon Fiber need a warm, closed-in box to stop them from warping or cracking while cooling.",
             options: [
-                { text: "Standard Everyday Materials", icon: "fa-leaf", hint: "PLA, PETG, and flexible TPU filaments. No toxic fumes or heavy thermal contraction.", value: "basic" },
-                { text: "Engineering-Grade Plastics", icon: "fa-flask", hint: "ABS, ASA, and fiber-reinforced matrix blends. Requires consistent ambient workspace heat.", value: "advanced" },
-                { text: "Specialty Materials", icon: "fa-radiation", hint: "High-spec structural options needing strict security protocols or actively heated enclosures.", value: "extreme" }
+                { text: "Standard Everyday Plastics", icon: "fa-leaf", hint: "PLA, PETG, or flexible TPU. Best for toys, models, and easy household fixes.", value: "basic" },
+                { text: "Engineering-Grade Plastics", icon: "fa-flask", hint: "ABS, ASA, or Carbon Fiber blends. Tougher plastics that need a hot, closed box.", value: "advanced" },
+                { text: "Specialty Materials", icon: "fa-radiation", hint: "Advanced materials requiring high-tech enclosures or offline security features.", value: "extreme" }
             ]
         },
         {
             key: "budget_tier",
-            text: "Select your required service deployment ecosystem",
-            explain: "Hobbyist models value accessibility. Performance and Flagship models offer advanced sensor systems, AI error detection, and strict data security compliance.",
+            text: "How do you plan to use this printer?",
+            explain: "Hobbyist models are simple and cost-effective. Performance and Flagship models offer premium build parts, touch screens, AI video error detection, and strict offline workplace security.",
             options: [
-                { text: "Great Value Hobbyist", icon: "fa-tags", hint: "Consumer-optimized features emphasizing cost-efficiency.", value: "budget" },
-                { text: "Everyday Workshop Workhorse", icon: "fa-hammer", hint: "Upgraded mechanical parts engineered for heavy operation duty-cycles.", value: "performance" },
-                { text: "Enterprise & Professional Flagship", icon: "fa-shield-halved", hint: "Extensive verification logic, closed offline networks, and absolute precision.", value: "flagship" }
+                { text: "Fun Hobbyist / Home Use", icon: "fa-tags", hint: "Simple, highly reliable features balanced with a beginner-friendly price.", value: "budget" },
+                { text: "Everyday Workshop Workhorse", icon: "fa-hammer", hint: "Durable metal parts meant to run continuously at top speeds.", value: "performance" },
+                { text: "Enterprise & Professional Flagship", icon: "fa-shield-halved", hint: "Top-end tools, precise cameras, and secure network compliance options.", value: "flagship" }
             ]
         },
         {
             key: "size_need",
-            text: "What model volume capacity matches your components?",
-            explain: "Build size restricts maximum model boundaries. Oversized pieces require a larger platform to prevent sectioned assembly slicing.",
+            text: "How big are the objects you want to make?",
+            explain: "Size determines how much room you have to build. Small is fine for miniature figures. Standard fits almost all online models. Large is for massive single-piece jobs.",
             options: [
-                { text: "Small items (Up to 180mm³ space)", icon: "fa-compress", hint: "Saves space, perfect for miniatures and electronic clips.", value: "small" },
-                { text: "Standard desktop room (Around 256mm³ space)", icon: "fa-border-all", hint: "The conventional footprint. Fits the majority of mainstream components.", value: "standard" },
-                { text: "Massive scale capacity (Up to 330mm³ space)", icon: "fa-expand", hint: "Wide industrial volume for large-span visual models.", value: "large" }
+                { text: "Small items (Up to 180mm³ space)", icon: "fa-compress", hint: "Saves table space. Ideal for tiny brackets, chess pieces, and small figures.", value: "small" },
+                { text: "Standard room (Around 256mm³ space)", icon: "fa-border-all", hint: "The regular default size. Easily prints 90% of things you find online.", value: "standard" },
+                { text: "Massive scale capacity (Up to 330mm³ space)", icon: "fa-expand", hint: "Huge print volume for making large helmets or structural parts.", value: "large" }
             ]
         },
         {
             key: "ams_needed",
-            text: "Do you require an automated multi-material handling feed?",
-            explain: "Bambu Automated Material Systems (AMS) actively swap up to 4 spools mid-print, facilitating complex visual color layers and clean water-soluble support separation.",
+            text: "Do you want to print in multiple colors at once?",
+            explain: "Bambu's AMS multi-material feeder automatically holds and switches up to 4 spools of plastic mid-print. This allows you to paint your designs with real color or use dissolveable support lines.",
             options: [
-                { text: "Yes, bundle it with an AMS unit setup", icon: "fa-layer-group", hint: "Mid-operation material swapping, multi-color patterns, and automated backup spools.", value: "yes" },
-                { text: "No, classic single-spool printing is fine", icon: "fa-scroll", hint: "Feeds one filament line sequentially. Standard, cost-effective setup.", value: "no" }
+                { text: "Yes, bundle it with an AMS multi-color unit", icon: "fa-layer-group", hint: "Allows up to 4 colors in a single print and auto-swaps empty spools.", value: "yes" },
+                { text: "No, traditional 1-color printing is fine", icon: "fa-scroll", hint: "Prints one color at a time. Straightforward, reliable, and keeps upfront costs low.", value: "no" }
             ]
         },
         {
             key: "laser_needed",
-            text: "Is an integrated toolhead laser module required?",
-            explain: "Only accessible within heavy format professional frameworks, enabling dual-purpose component engraving.",
+            text: "Do you need a laser attachment tool?",
+            explain: "Only available on large industrial professional setups, allowing you to trace or engrave flat lines onto surfaces.",
             options: [
-                { text: "No laser utility required", icon: "fa-xmark", hint: "Dedicate full machine resources to traditional 3D extrusion.", value: "none" },
-                { text: "Yes, standard laser module support", icon: "fa-marker", hint: "10W low-power diode module for shallow surface marking.", value: "10w" },
-                { text: "Yes, high-power toolhead module", icon: "fa-laser-cutting", hint: "40W industrial module capable of shallow sheet carving operations.", value: "40w" }
+                { text: "No laser utility required", icon: "fa-xmark", hint: "Focus 100% on standard 3D printing features.", value: "none" },
+                { text: "Yes, standard laser module support", icon: "fa-marker", hint: "10W diode laser for drawing low-power burnt details onto wood or plastics.", value: "10w" },
+                { text: "Yes, high-power toolhead module", icon: "fa-laser-cutting", hint: "40W industrial module capable of shallow surface carving lines.", value: "40w" }
             ]
         }
     ];
@@ -506,8 +460,8 @@
         if (saved && savedIndex && parseInt(savedIndex) > 0) {
             document.getElementById('resume-container').innerHTML = `
                 <div class="resume-banner">
-                    <span>Incomplete configuration sequence detected.</span>
-                    <button class="btn" style="width:auto; padding: 6px 12px; font-size:12px;" onclick="resumeQuiz()">Resume Session</button>
+                    <span>You have an unfinished quiz session saved.</span>
+                    <button class="btn" style="width:auto; padding: 6px 12px; font-size:12px;" onclick="resumeQuiz()">Resume Quiz</button>
                 </div>`;
         }
     };
@@ -545,7 +499,7 @@
 
         const q = questions[currentQuestionIndex];
         
-        // Context skip guardrail rule
+        // Skip laser question if not looking at a large printer
         if (q.key === "laser_needed" && userSelections["form_factor"] !== "H") {
             userSelections["laser_needed"] = "none";
             currentQuestionIndex++;
@@ -639,18 +593,18 @@
         }
     }
 
-    // Smart Filament Matcher Warnings
+    // Friendly beginner warning notes
     function triggerContextValidation(currentKey, currentValue) {
         const warnBox = document.getElementById('warning-box');
         const warnText = document.getElementById('warning-text');
         warnBox.style.display = 'none';
 
         if (currentKey === 'materials' && currentValue === 'advanced' && userSelections['form_factor'] === 'A') {
-            warnText.innerText = "Warning: Engineering materials require high ambient thermal stability. Open frames risk warp failures.";
+            warnText.innerText = "Heads up: Open frame printers don't hold heat well. Advanced plastics might warp or crack without a fully closed box.";
             warnBox.style.display = 'flex';
         }
         if (currentKey === 'max_budget' && currentValue < 600) {
-            warnText.innerText = "Notice: Caps under $600 omit core desktop enclosures from active deployment routes.";
+            warnText.innerText = "Budget Alert: Setting your limit below $600 will filter out most closed desktop box printers.";
             warnBox.style.display = 'flex';
         }
     }
@@ -698,7 +652,7 @@
 
             let calculatedPercentage = totalWeights > 0 ? Math.round((score / totalWeights) * 100) : 100;
             
-            // Hard Price Filter Adjuster rule
+            // Penalty if model is over user budget
             if (model.price > budgetCap) {
                 calculatedPercentage = Math.max(0, calculatedPercentage - 40); 
             }
@@ -711,10 +665,10 @@
         const statusBox = document.getElementById('status-box');
         const f = userSelections.form_factor;
         
-        if (f === "A") statusBox.innerText = "Isolating value-focused bed-slinger alignments...";
-        else if (f === "H") statusBox.innerText = "Calibrating structural massive engineering parameters...";
-        else if (f === "P_X") statusBox.innerText = "Refining desktop high-speed box metrics...";
-        else statusBox.innerText = "Aggregating multi-variant constraints...";
+        if (f === "A") statusBox.innerText = "Looking for budget-friendly open frame options...";
+        else if (f === "H") statusBox.innerText = "Filtering for large industrial platforms...";
+        else if (f === "P_X") statusBox.innerText = "Finding fast enclosed desktop boxes...";
+        else statusBox.innerText = "Awaiting your choices...";
 
         const ranked = getRankedMatches();
         const leaderboard = document.getElementById('leaderboard');
@@ -750,7 +704,7 @@
 
             const badge = document.createElement('div');
             badge.className = `result-badge ${isBest ? 'badge-primary' : 'badge-secondary'}`;
-            badge.innerText = isBest ? `🏆 Primary Choice - ${printer.pct}% Match` : `Alternative Tier #${idx + 1} - ${printer.pct}% Match`;
+            badge.innerText = isBest ? `🏆 Top Pick - ${printer.pct}% Match` : `Alternative Choice #${idx + 1} - ${printer.pct}% Match`;
             card.appendChild(badge);
 
             const title = document.createElement('div');
@@ -759,23 +713,22 @@
             card.appendChild(title);
 
             const description = document.createElement('div');
-            description.style.fontSize = '14px'; description.style.opacity = '0.85'; description.style.lineHeight = '1.5';
+            description.style.fontXsize = '14px'; description.style.opacity = '0.85'; description.style.lineHeight = '1.5';
             description.innerText = printer.desc;
             card.appendChild(description);
 
-            // Action block utility links
             const actionBlock = document.createElement('div');
             actionBlock.className = 'action-block';
             
             const btnSpec = document.createElement('button');
             btnSpec.className = "btn";
-            btnSpec.innerHTML = "<i class='fa-solid fa-square-poll-horizontal'></i> Matrix Compare";
+            btnSpec.innerHTML = "<i class='fa-solid fa-square-poll-horizontal'></i> Compare Specs";
             btnSpec.onclick = () => openCompareMatrix(printer);
             
             const btnLink = document.createElement('button');
             btnLink.className = "btn btn-secondary";
-            btnLink.innerHTML = "Specs Sheet <i class='fa-solid fa-arrow-up-right-from-square'></i>";
-            btnLink.onclick = () => alert(`Redirecting to hardware spec data registry for the ${printer.name}.`);
+            btnLink.innerHTML = "View Info <i class='fa-solid fa-arrow-up-right-from-square'></i>";
+            btnLink.onclick = () => alert(`Opening information sheet for the ${printer.name}.`);
             
             actionBlock.appendChild(btnSpec);
             actionBlock.appendChild(btnLink);
@@ -785,16 +738,16 @@
             matrix.className = 'matrix-container';
             
             const capabilities = [
-                { name: "Everyday filaments (PLA)", ok: true },
-                { name: "Isolated thermal envelope", ok: printer.form !== "A" },
-                { name: "Multi-material routing", ok: printer.ams === "yes" },
-                { name: "Budget Allocation Limit Check", ok: printer.price <= (userSelections.max_budget || 5000) }
+                { name: "Everyday plastics (PLA)", ok: true },
+                { name: "Fully closed case", ok: printer.form !== "A" },
+                { name: "Multi-color printing", ok: printer.ams === "yes" },
+                { name: "Fits under your budget", ok: printer.price <= (userSelections.max_budget || 5000) }
             ];
 
             capabilities.forEach(cap => {
                 const item = document.createElement('div');
                 item.className = `matrix-item ${cap.ok ? 'mat-pass' : 'mat-fail'}`;
-                item.innerHTML = `<span>${cap.name}</span> <span>${cap.ok ? '✓ Supported' : '✕ Unsupported'}</span>`;
+                item.innerHTML = `<span>${cap.name}</span> <span>${cap.ok ? '✓ Yes' : '✕ No'}</span>`;
                 matrix.appendChild(item);
             });
 
@@ -803,19 +756,18 @@
         });
     }
 
-    // Compare side-by-side modal rendering logic
     function openCompareMatrix(selectedPrinter) {
-        const benchmark = finalRankedMatches[0]; // Compares against the absolute #1 pick
-        document.getElementById('compare-title').innerText = `Comparison: ${selectedPrinter.name} vs ${benchmark.name}`;
+        const benchmark = finalRankedMatches[0]; 
+        document.getElementById('compare-title').innerText = `${selectedPrinter.name} vs ${benchmark.name}`;
         
         const table = document.getElementById('compare-table-data');
         table.innerHTML = `
-            <tr><th>Metric Specs</th><th>${selectedPrinter.name}</th><th>${benchmark.name} (Top Pick)</th></tr>
-            <tr><td>MSRP Cost</td><td>$${selectedPrinter.price}</td><td>$${benchmark.price}</td></tr>
-            <tr><td>Form Architecture</td><td>${selectedPrinter.form === 'A' ? 'Bed-Slinger' : selectedPrinter.form === 'P_X' ? 'CoreXY Box' : 'Large Format'}</td><td>${benchmark.form === 'A' ? 'Bed-Slinger' : benchmark.form === 'P_X' ? 'CoreXY Box' : 'Large Format'}</td></tr>
-            <tr><td>Enclosed Chamber</td><td>${selectedPrinter.form !== 'A' ? 'Yes' : 'No'}</td><td>${benchmark.form !== 'A' ? 'Yes' : 'No'}</td></tr>
-            <tr><td>AMS Multi-Feeding</td><td>${selectedPrinter.ams === 'yes' ? 'Included' : 'No'}</td><td>${benchmark.ams === 'yes' ? 'Included' : 'No'}</td></tr>
-            <tr><td>Laser Toolhead Cap</td><td>${selectedPrinter.laser !== 'none' ? selectedPrinter.laser : 'None'}</td><td>${benchmark.laser !== 'none' ? benchmark.laser : 'None'}</td></tr>
+            <tr><th>Feature</th><th>${selectedPrinter.name}</th><th>${benchmark.name} (Top Pick)</th></tr>
+            <tr><td>Price</td><td>$${selectedPrinter.price}</td><td>$${benchmark.price}</td></tr>
+            <tr><td>Body Style</td><td>${selectedPrinter.form === 'A' ? 'Open Bed' : selectedPrinter.form === 'P_X' ? 'Closed Box' : 'Large Industrial'}</td><td>${benchmark.form === 'A' ? 'Open Bed' : benchmark.form === 'P_X' ? 'Closed Box' : 'Large Industrial'}</td></tr>
+            <tr><td>Closed Case</td><td>${selectedPrinter.form !== 'A' ? 'Yes' : 'No'}</td><td>${benchmark.form !== 'A' ? 'Yes' : 'No'}</td></tr>
+            <tr><td>Multi-Color Feed</td><td>${selectedPrinter.ams === 'yes' ? 'Yes' : 'No'}</td><td>${benchmark.ams === 'yes' ? 'Yes' : 'No'}</td></tr>
+            <tr><td>Engraving Laser</td><td>${selectedPrinter.laser !== 'none' ? selectedPrinter.laser : 'No'}</td><td>${benchmark.laser !== 'none' ? benchmark.laser : 'No'}</td></tr>
         `;
         document.getElementById('compare-modal').style.display = 'flex';
     }
@@ -826,12 +778,12 @@
 
     function copyMarkdownReport() {
         if (!finalRankedMatches.length) return;
-        let report = `### 🖨️ Evaluated Hardware Selector Report\n`;
+        let report = `### 🖨️ My Custom Bambu Lab Printer Matches\n`;
         finalRankedMatches.slice(0, 3).forEach((p, idx) => {
-            report += `${idx + 1}. **${p.name}** ($${p.price}) - ${p.pct}% Match Compatibility\n   - ${p.desc}\n`;
+            report += `${idx + 1}. **${p.name}** ($${p.price}) - ${p.pct}% Match\n   - ${p.desc}\n`;
         });
         navigator.clipboard.writeText(report);
-        alert("Configuration matrix record exported to clipboard storage.");
+        alert("Your quiz results have been saved to your clipboard!");
     }
 
     function resetQuiz() {
