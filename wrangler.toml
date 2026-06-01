@@ -1,3 +1,4 @@
-name = "your-actual-worker-name"
-main = "index.js" # Change this to your main script file name if it's different
+name = "bambulabprinterquiz"
+account_id = "bcc7d770acbbe889286a95a94f3294c5"
+main = "index.js"
 compatibility_date = "2026-06-01"
