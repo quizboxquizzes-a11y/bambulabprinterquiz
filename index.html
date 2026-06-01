@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bambu Lab Configuration Matcher</title>
+    <title>Bambu Lab Elite Deployment Framework</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖨️</text></svg>">
     <style>
         :root {
@@ -15,6 +15,10 @@
             --border-color: #30363d;
             --card-hover: #21262d;
             --selected-border: #58a6ff;
+            --tag-pass: rgba(46, 164, 79, 0.15);
+            --tag-pass-text: #56d364;
+            --tag-fail: rgba(240, 81, 81, 0.1);
+            --tag-fail-text: #f7786b;
         }
 
         body {
@@ -40,11 +44,7 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
 
-        h1, h2, h3 {
-            color: #fff;
-            font-weight: 600;
-        }
-
+        h1, h3, h4 { color: #fff; font-weight: 600; }
         h1 { font-size: 24px; text-align: center; margin-bottom: 8px; }
         .subtitle { text-align: center; color: #8b949e; margin-bottom: 24px; font-size: 14px; }
 
@@ -63,7 +63,6 @@
             width: 100%;
             transition: background 0.2s;
         }
-
         .btn:hover { background-color: var(--accent-hover); }
         .btn:disabled { background-color: #21262d; color: #8b949e; cursor: not-allowed; border-color: var(--border-color); }
 
@@ -77,9 +76,10 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-
         .option-card:hover { background-color: var(--card-hover); }
         .option-card.selected { border-color: var(--selected-border); background-color: #1f2937; }
+
+        .hint { display: block; font-size: 12px; color: #8b949e; margin-top: 4px; }
 
         .progress-bar-container { background-color: var(--border-color); height: 4px; border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
         .progress-bar { background-color: var(--accent-color); height: 100%; width: 0%; transition: width 0.3s ease; }
@@ -88,28 +88,47 @@
         .btn-secondary { background-color: #21262d; color: #c9d1d9; border: 1px solid var(--border-color); }
         .btn-secondary:hover { background-color: #30363d; }
 
+        .resume-banner {
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid var(--selected-border);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .result-box { border: 1px solid var(--accent-color); background-color: rgba(46, 164, 79, 0.1); padding: 20px; border-radius: 6px; text-align: center; margin-top: 20px; }
         .result-title { font-size: 22px; color: #fff; font-weight: 700; }
-        .feature-tag { display: inline-block; background: #21262d; border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 4px; font-size: 12px; margin: 4px; }
+        
+        .matrix-container { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .matrix-item { padding: 6px 10px; border-radius: 4px; font-size: 12px; display: flex; justify-content: space-between; font-weight: 500; }
+        .mat-pass { background-color: var(--tag-pass); color: var(--tag-pass-text); }
+        .mat-fail { background-color: var(--tag-fail); color: var(--tag-fail-text); }
     </style>
 </head>
 <body>
 
 <div class="quiz-container">
     <div id="intro-screen" class="screen active">
-        <h1>Bambu Lab Picker</h1>
-        <div class="subtitle">Hardware Matcher Framework</div>
+        <h1>Bambu Lab Ecosystem Matcher</h1>
+        <div class="subtitle">Hardware Optimization Pipeline</div>
+        
+        <div id="resume-container"></div>
+
         <p style="line-height: 1.6; font-size: 14px; color: #8b949e; text-align: center; margin-bottom: 30px;">
-            Filter down to your exact 3D printer and hardware package based on workspace requirements, material layout needs, and specific tool features.
+            Identify your perfect machine class, toolhead variance, and multi-material environment configurations instantly.
         </p>
-        <button class="btn" onclick="startQuiz()">Start Configuration</button>
+        <button class="btn" onclick="startQuiz(false)">Start Configuration Evaluation</button>
     </div>
 
     <div id="quiz-screen" class="screen">
         <div class="progress-bar-container">
             <div id="progress" class="progress-bar"></div>
         </div>
-        <h3 id="question-text" style="margin-top: 0;">Loading question...</h3>
+        <h3 id="question-text" style="margin-top: 0;">Loading context question...</h3>
         <div id="options-container" class="options-list"></div>
         
         <div class="nav-buttons">
@@ -119,13 +138,17 @@
     </div>
 
     <div id="results-screen" class="screen">
-        <h1>Your Match</h1>
-        <div class="subtitle">Optimal physical configuration:</div>
+        <h1>System Optimization Match</h1>
+        <div class="subtitle">Your hardware setup blueprint:</div>
         <div class="result-box">
-            <div id="match-name" class="result-title">Calculating...</div>
+            <div id="match-name" class="result-title">Analyzing choices...</div>
         </div>
         <div id="match-details" style="margin-top: 20px; font-size: 14px; color: #8b949e; line-height: 1.5;"></div>
-        <button class="btn btn-secondary" style="margin-top: 24px;" onclick="resetQuiz()">Restart Quiz</button>
+        
+        <h4>Material Profile Readiness:</h4>
+        <div id="filament-matrix" class="matrix-container"></div>
+
+        <button class="btn btn-secondary" style="margin-top: 28px;" onclick="resetQuiz()">Clear & Start Over</button>
     </div>
 </div>
 
@@ -138,67 +161,91 @@
     const questions = [
         {
             key: "form_factor",
-            text: "What tier of print architecture and workspace envelope do you need?",
+            text: "What mechanical architecture matches your workspace layout?",
             options: [
-                { text: "Entry-Level Bed-Slinger (Compact & Open)", value: "A" },
-                { text: "Mid-to-High Tier Enclosed CoreXY (Fast, enclosed desktop sizes)", value: "P_X" },
-                { text: "Large Format / Enterprise Platform (Massive volume, high-temp environments)", value: "H" }
+                { text: "Entry-Level Bed-Slinger", hint: "Open design where the print bed moves along the Y-axis. Economical and reliable.", value: "A" },
+                { text: "Enclosed CoreXY Box Structure", hint: "Fixed bed vertical motion with ultra-fast overhead tool head travel.", value: "P_X" },
+                { text: "Heavy Enterprise Platform", hint: "Maximum high-temperature configurations and massive structural footprints.", value: "H" }
             ]
         },
         {
             key: "materials",
-            text: "What type of technical filaments do you intend to run regularly?",
+            text: "What structural filament requirements do you have?",
             options: [
-                { text: "Basic elements (PLA, PETG, TPU Only)", value: "basic" },
-                { text: "Enclosed engineering parts (ABS, ASA, PA, PC, Carbon Fiber)", value: "advanced" },
-                { text: "Ultra-spec engineering / Cross-Material systems (Active chamber heating or multi-nozzle swaps)", value: "extreme" }
+                { text: "Standard Filaments", hint: "Primarily open-air printing using simple PLA, PETG, or flexible TPU.", value: "basic" },
+                { text: "Engineering Polymers", hint: "Requires constant high-temp retention for warping control (ABS, ASA, Carbon Fiber combinations).", value: "advanced" },
+                { text: "Ultra-Spec Systems", hint: "Requires active temperature chamber environments or continuous hardware tool-changing methods.", value: "extreme" }
             ]
         },
         {
             key: "budget_tier",
-            text: "Which class of machine fits your deployment setting?",
+            text: "What operation deployment tier does this budget fit?",
             options: [
-                { text: "Cost-sensitive / Desktop Hobbyist", value: "budget" },
-                { text: "High-Performance Workhorse (Maximum speed & standard production)", value: "performance" },
-                { text: "Enterprise Flagship / Lab Environment (Advanced data compliance, active heating)", value: "flagship" }
+                { text: "Hobbyist Baseline Space", hint: "High performance value tracking for personal labs.", value: "budget" },
+                { text: "Production Workhorse", hint: "Continuous operations speed, robust mechanics, standard scaling.", value: "performance" },
+                { text: "Enterprise Flagship", hint: "Full data governance compliance, premium sensors, multi-axis system expansion.", value: "flagship" }
             ]
         },
         {
             key: "size_need",
-            text: "What are your minimum build volume expectations?",
+            text: "What are your minimum workspace dimension restrictions?",
             options: [
-                { text: "Small format is fine (Up to 180mm³)", value: "small" },
-                { text: "Standard desktop format (Around 256mm³)", value: "standard" },
-                { text: "Over-sized workspace volume (Up to 330mm³)", value: "large" }
+                { text: "Small Frame Core (Up to 180mm³)", hint: "Great for miniature structural work and space savings.", value: "small" },
+                { text: "Standard Frame Core (Around 256mm³)", hint: "The regular desktop capacity threshold.", value: "standard" },
+                { text: "Large Scale Workspace (Up to 330mm³)", hint: "Industrial volume for unsegmented component manufacturing.", value: "large" }
             ]
         },
         {
             key: "ams_needed",
-            text: "Do you require an automatic material configuration system (AMS) for multi-color or support material printing?",
+            text: "Do you require automated material management components (AMS)?",
             options: [
-                { text: "Yes, I want the system bundled with an AMS unit", value: "yes" },
-                { text: "No, standalone single-spool printing is sufficient", value: "no" }
+                { text: "Yes, incorporate an AMS unit package", hint: "Enables multi-color processing and continuous support structures.", value: "yes" },
+                { text: "No, standalone layout operations", hint: "Single reel feed setups fit the workspace goals just fine.", value: "no" }
             ]
         },
         {
             key: "laser_needed",
-            text: "Do you need integrated laser engraving/cutting hardware modules?",
+            text: "Do you need inline cutting/engraving modules integrated?",
             options: [
-                { text: "No laser functionality needed", value: "none" },
-                { text: "Yes, standard 10W entry laser utility", value: "10w" },
-                { text: "Yes, high-power 40W production laser utility", value: "40w" }
+                { text: "No laser arrays required", hint: "Pure additive printing environment.", value: "none" },
+                { text: "Yes, 10W standard processing bundle", hint: "Suited for basic profile engraving jobs.", value: "10w" },
+                { text: "Yes, 40W heavy production toolhead", hint: "Thicker structural component adjustments directly inside the bay.", value: "40w" }
             ]
         }
     ];
 
-    function startQuiz() {
+    window.onload = function() {
+        const saved = localStorage.getItem('bambu_quiz_selections');
+        const savedIndex = localStorage.getItem('bambu_quiz_index');
+        
+        if (saved && savedIndex && parseInt(savedIndex) > 0) {
+            document.getElementById('resume-container').innerHTML = `
+                <div class="resume-banner">
+                    <span>You have a saved session available.</span>
+                    <button class="btn" style="width:auto; padding: 6px 12px; font-size:12px;" onclick="resumeQuiz()">Resume</button>
+                </div>`;
+        }
+    };
+
+    function startQuiz(isResume = false) {
         document.getElementById('intro-screen').classList.remove('active');
         document.getElementById('quiz-screen').classList.add('active');
-        currentQuestionIndex = 0;
-        userSelections = {};
-        historyStack = [];
-        temporarySelection = null;
+        
+        if (!isResume) {
+            currentQuestionIndex = 0;
+            userSelections = {};
+            historyStack = [];
+            localStorage.clear();
+        } else {
+            userSelections = JSON.parse(localStorage.getItem('bambu_quiz_selections') || '{}');
+            currentQuestionIndex = parseInt(localStorage.getItem('bambu_quiz_index') || '0');
+            historyStack = JSON.parse(localStorage.getItem('bambu_quiz_history') || '[]');
+        }
         renderQuestion();
+    }
+
+    function resumeQuiz() {
+        startQuiz(true);
     }
 
     function renderQuestion() {
@@ -209,7 +256,6 @@
 
         const q = questions[currentQuestionIndex];
         
-        // Smart dynamic skip logic: skip laser question if they didn't choose H platform
         if (q.key === "laser_needed" && userSelections["form_factor"] !== "H") {
             userSelections["laser_needed"] = "none";
             currentQuestionIndex++;
@@ -231,7 +277,16 @@
         q.options.forEach(opt => {
             const card = document.createElement('div');
             card.className = 'option-card';
-            card.innerText = opt.text;
+            
+            const txt = document.createElement('div');
+            txt.innerText = opt.text;
+            txt.style.fontWeight = "500";
+            card.appendChild(txt);
+            
+            const hnt = document.createElement('span');
+            hnt.className = 'hint';
+            hnt.innerText = opt.hint;
+            card.appendChild(hnt);
             
             if (userSelections[q.key] === opt.value) {
                 card.classList.add('selected');
@@ -255,6 +310,11 @@
         userSelections[q.key] = temporarySelection;
         historyStack.push(currentQuestionIndex);
         currentQuestionIndex++;
+        
+        localStorage.setItem('bambu_quiz_selections', JSON.stringify(userSelections));
+        localStorage.setItem('bambu_quiz_index', currentQuestionIndex);
+        localStorage.setItem('bambu_quiz_history', JSON.stringify(historyStack));
+        
         renderQuestion();
     }
 
@@ -267,9 +327,11 @@
     function calculateResult() {
         document.getElementById('quiz-screen').classList.remove('active');
         document.getElementById('results-screen').classList.add('active');
+        localStorage.clear();
 
         let match = "P1S Combo (With AMS)"; 
         let details = "";
+        let highTempFilaments = false; 
 
         const f = userSelections.form_factor;
         const m = userSelections.materials;
@@ -281,75 +343,91 @@
         if (f === "A" || s === "small" || (b === "budget" && f !== "H")) {
             if (s === "small") {
                 match = (ams === "yes") ? "A1 mini Combo (With AMS lite)" : "A1 mini";
-                details = "Perfect space-saving profile. Optimized for standard materials with structural reliability.";
+                details = "Compact footprint optimizer. Exceptional default handling metrics for fundamental applications.";
             } else {
                 match = (ams === "yes") ? "A1 Combo (With AMS lite)" : "A1";
-                details = "Full-scale entry platform featuring quick-swap components and high baseline efficiency.";
+                details = "Open architecture platform setup showcasing rapid nozzle swapping mechanisms.";
             }
         } 
         else if (f === "H" || s === "large" || m === "extreme") {
+            highTempFilaments = true;
             if (m === "extreme" || b === "flagship") {
                 if (laser === "10w") match = "H2C Laser Full Combo (10W)";
                 else if (laser === "40w") match = "H2C Laser Full Combo (40W)";
                 else match = "H2C Vortek Combo (With AMS 2 Pro)";
-                details = "Flagship industrial hardware configuration running dedicated multi-material systems.";
+                details = "Industrial flagship assembly environment utilizing advanced continuous active heating systems.";
             } else if (b === "performance") {
                 if (laser === "10w" || laser === "40w") match = "H2D Laser Combo";
                 else if (ams === "yes") match = "H2D Combo (With AMS 2 Pro)";
                 else match = "H2D Standard";
-                details = "Heavy-duty commercial workhorse managing continuous advanced filament throughput.";
+                details = "Heavy duty workspace array configured to deliver precise physical volume consistency.";
             } else {
                 if (laser === "10w" || laser === "40w") match = "H2S Laser Full Combo";
                 else if (ams === "yes") match = "H2S Combo (With AMS 2 Pro)";
                 else match = "H2S Standard";
-                details = "High-scale engineering foundation designed for continuous baseline structural performance.";
+                details = "Scalable multi-material foundation optimized to run high structural print runs safely.";
             }
             if (b === "flagship" && ams === "no" && laser === "none" && m === "advanced") {
                 match = "H2D Pro";
-                details = "High-security standalone deployment model for air-gapped industrial workflows.";
+                details = "Air-gapped structural ecosystem deployment tailored for regulated workshop requirements.";
             }
         } 
         else {
             if (b === "flagship" || m === "advanced") {
+                highTempFilaments = true;
                 if (b === "flagship" && m === "advanced" && ams === "no") {
                     match = "X1E";
-                    details = "Advanced enterprise terminal with network security profiles and active chamber environmental controls.";
+                    details = "Enterprise security terminal processing high active temperature configurations.";
                 } else {
                     if (ams === "yes") {
                         match = (b === "flagship") ? "X2D Combo (With AMS)" : "X1-Carbon Combo (With AMS)";
                     } else {
                         match = (b === "flagship") ? "X2D" : "X1-Carbon";
                     }
-                    details = "Elite desktop multi-material hardware featuring integrated monitoring arrays and hardened components.";
+                    details = "Premium closed CoreXY environment incorporating automated sensor calibration grids.";
                 }
             } else {
                 if (b === "budget") {
                     match = "P1P";
-                    details = "Stripped core performance platform optimized for high structural speeds without unnecessary additions.";
+                    details = "Stripped high speed CoreXY platform targeting raw computational execution speeds.";
                 } else {
+                    highTempFilaments = true;
                     if (ams === "yes") {
                         match = (b === "performance") ? "P2S Combo (With AMS)" : "P1S Combo (With AMS)";
                     } else {
                         match = (b === "performance") ? "P2S" : "P1S";
                     }
-                    details = "The golden baseline standard for enclosed continuous manufacturing pipelines.";
+                    details = "The optimal enclosed standard for consistent desktop operations deployment.";
                 }
             }
         }
 
         document.getElementById('match-name').innerText = match;
-        document.getElementById('match-details').innerHTML = `
-            <p>${details}</p>
-            <div style="margin-top:15px;">
-                <span class="feature-tag">Chassis: ${f === "P_X" ? "CoreXY Desktop" : f === "H" ? "Enterprise Frame" : "Bedslinger"}</span>
-                <span class="feature-tag">AMS Bundle: ${ams === "yes" ? "Included" : "None"}</span>
-            </div>
-        `;
+        document.getElementById('match-details').innerText = details;
+
+        // Render Dynamic Filament Compatibility Matrix
+        const matrix = document.getElementById('filament-matrix');
+        const list = [
+            { name: "PLA / PETG", native: true },
+            { name: "TPU (Flexible)", native: f !== "H" }, // H series tool-changers prefer standard engineering feeds
+            { name: "ABS / ASA", native: highTempFilaments },
+            { name: "Carbon Fiber Nylon", native: highTempFilaments && f !== "A" }
+        ];
+        
+        matrix.innerHTML = '';
+        list.forEach(item => {
+            const div = document.createElement('div');
+            div.className = `matrix-item ${item.native ? 'mat-pass' : 'mat-fail'}`;
+            div.innerHTML = `<span>${item.name}</span> <span>${item.native ? '✓ Ready' : '✕ Structural Limit'}</span>`;
+            matrix.appendChild(div);
+        });
     }
 
     function resetQuiz() {
+        localStorage.clear();
         document.getElementById('results-screen').classList.remove('active');
         document.getElementById('intro-screen').classList.add('active');
+        document.getElementById('resume-container').innerHTML = '';
     }
 </script>
 </body>
